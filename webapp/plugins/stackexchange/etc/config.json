@@ -1,0 +1,73 @@
+{
+    "fields":
+    {
+        "example":
+        {
+            "type"              : "text",                      
+            "values"            : null,
+            "validation_regex"  : null,
+            "default_value"     : null,
+            "label"             : "Testing Field",
+            "header"            : "A Header for this Field",
+            "id"                : null,
+            "value"             : null,
+            "size"              : null,
+            "validation_message": null,
+            "required"          : true,
+            "advanced"          : false,            
+            "end":"end"
+        },
+        "oauth_client_id":
+        {
+            "type"              : "text",                      
+            "values"            : null,
+            "validation_regex"  : null,
+            "default_value"     : null,
+            "label"             : "Client ID",
+            "header"            : null,
+            "id"                : null,
+            "value"             : null,
+            "size"              : null,
+            "validation_message": null,
+            "required"          : true,
+            "advanced"          : false,            
+            "end":"end"
+        },
+        "oauth_consumer_secret":
+        {
+            "type"              : "text",                      
+            "values"            : null,
+            "validation_regex"  : null,
+            "default_value"     : null,
+            "label"             : "Client Secret",
+            "header"            : null,
+            "id"                : null,
+            "value"             : null,
+            "size"              : null,
+            "validation_message": null,
+            "required"          : true,
+            "advanced"          : false,            
+            "end":"end"
+        },          
+        "oauth_consumer_key":
+        {
+            "type"              : "text",                      
+            "values"            : null,
+            "validation_regex"  : null,
+            "default_value"     : null,
+            "label"             : "Key",
+            "header"            : null,
+            "id"                : null,
+            "value"             : null,
+            "size"              : null,
+            "validation_message": null,
+            "required"          : true,
+            "advanced"          : false,            
+            "end":"end"
+        },
+        
+      
+        
+        "end":"end"
+    }
+}

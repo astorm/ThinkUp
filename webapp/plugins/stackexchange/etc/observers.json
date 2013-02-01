@@ -1,0 +1,19 @@
+{
+    "observers":[
+        {
+            "event_name":"stackexchange_user_update",
+            "dao":"PulsestormStackexchangeUser",
+            "method":"syncToUsersTable"
+        },
+        {
+            "event_name":"pulsestorm_stackexchange_crawl_finished",
+            "dao":"PulsestormStackexchangeCrawlSync",
+            "method":"syncUsers"
+        },        
+        {
+            "event_name":"pulsestorm_stackexchange_crawl_finished",
+            "dao":"PulsestormStackexchangeCrawlSync",
+            "method":"syncPosts"
+        }        
+    ]
+}
