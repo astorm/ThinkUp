@@ -29,7 +29,7 @@
  * @license http://www.gnu.org/licenses/gpl.html
  * @copyright 2012 Alan Storm
  */
-require_once THINKUP_ROOT_PATH.'plugins/stackexchange/model/class.stackexchangeCrawler.php';
+require_once dirname(__FILE__).'/../../../plugins/stackexchange/model/class.stackexchangeCrawler.php';
 
 class stackexchangePlugin extends Plugin implements CrawlerPlugin, DashboardPlugin, PostDetailPlugin {
 
