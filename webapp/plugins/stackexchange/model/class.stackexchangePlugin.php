@@ -134,10 +134,16 @@ class stackexchangePlugin extends Plugin implements CrawlerPlugin, DashboardPlug
     }
 
     public function crawl() {                 
-        $this->init();
+        $this->init();        
+        
         $o          = DAOFactory::getDao('InstanceDAO');
         $instances  =  $o->getAllInstances('DESC', true, 'stackexchange');
 
+        $o = new stdClass;
+        $o->instances = $instances;
+        PulsestormEvents::dispatchEvent('pulsestorm_stackexchange_crawl_finished',$o);
+        exit;
+        
         //fetches JSON from API
         $this->_updateRawContent($instances);
         

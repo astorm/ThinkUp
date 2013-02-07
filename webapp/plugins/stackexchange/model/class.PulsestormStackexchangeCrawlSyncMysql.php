@@ -25,9 +25,18 @@ class PulsestormStackexchangeCrawlSyncMysql
             $this->_updateUsersFromStackExchangeNetwork($network);
         }    
         array_push($observer->params->instances,$this->_instanceForAuth);
+        
+        
+        $this->_updateAccountIdsForUsersInTuUsers();
+        
         $this->_instanceForAuth = false;
     }    
 
+    protected function _updateAccountIdsForUsersInTuUsers()
+    {        
+        DAOFactory::getDao('PulsestormStackexchangeAccountids')->updateFromUsersTable();    
+    }
+    
     protected function _updatePostsWithInstance($instance)
     {
         $ids_and_networks = DAOFactory::getDao('PulsestormStackexchangeAccountids')
