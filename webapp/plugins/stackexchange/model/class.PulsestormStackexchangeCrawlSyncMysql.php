@@ -27,7 +27,7 @@ class PulsestormStackexchangeCrawlSyncMysql
         array_push($observer->params->instances,$this->_instanceForAuth);
         
         
-        $this->_updateAccountIdsForUsersInTuUsers();
+        // $this->_updateAccountIdsForUsersInTuUsers();
         
         $this->_instanceForAuth = false;
     }    
@@ -321,6 +321,7 @@ class PulsestormStackexchangeCrawlSyncMysql
     protected function _updateUsersFromStackExchangeNetwork($network)
     {        
         $ids = $this->_getUserIdsFromStackExchangeNetwork($network);
+        
         if(!$ids)
         {
             return;
@@ -333,8 +334,7 @@ class PulsestormStackexchangeCrawlSyncMysql
     protected function _updateUsersFromStackExchangeAccounts()
     {
         $dao_user = DAOFactory::getDao('UserDAO');
-        $dao_stack_exchange_account = DAOFactory::getDao('PulsestormStackexchangeAccount');
-        
+        $dao_stack_exchange_account = DAOFactory::getDao('PulsestormStackexchangeAccount');        
         $result = $dao_stack_exchange_account->getResultSetAll();
         $result->setFetchMode(PDO::FETCH_ASSOC);
         while($row = $result->fetch())

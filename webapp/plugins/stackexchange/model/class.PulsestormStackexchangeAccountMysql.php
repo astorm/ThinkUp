@@ -18,6 +18,16 @@ class PulsestormStackexchangeAccountMysql extends PulsestormStackexchangeAbstrac
 
     public function insertOrUpdate($object)
     {
+        //update account ids
+        $o = new stdClass();
+        $o->account_id_stackexchange    = $object->account_id;
+        $o->account_id_network_site     = $object->user_id;
+        $o->stackexchange_network       = $this->getNetwork();        
+        
+        
+        $dao = DAOFactory::getDao('PulsestormStackexchangeAccountids')->insertOrUpdate($o);
+
+        //serialize badge count as json
         $object->badge_counts = json_encode($object->badge_counts);
         return parent::insertOrUpdate($object);
     }

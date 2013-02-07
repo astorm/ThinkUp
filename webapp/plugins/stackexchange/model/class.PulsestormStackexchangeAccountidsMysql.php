@@ -33,7 +33,7 @@ SQL;
     }    
 
     public function updateFromUsersTable()
-    {    
+    {            
         $sql = 'SELECT user_id FROM #prefix#users
         where network="stackexchange"';
         $rows = $this->getDataRowsAsArrays($this->execute($sql));
@@ -61,13 +61,13 @@ SQL;
     {
         $o = new stackexchangeCrawler;
         $account_ids_stackexchange = is_array($account_ids_stackexchange) ? $account_ids_stackexchange : array($account_ids_stackexchange);
-        $chunked = $this->_chunkArray($account_ids_stackexchange,100);
+        $chunked = $this->_chunkArray($account_ids_stackexchange,10);
         
         foreach($chunked as $account_ids_stackexchange)
         {
             //grab ALL account information
             $all_items = $o->getAllAccountInformationFromAccountIds($account_ids_stackexchange);
-            
+        
             //main update loop
             $sites_by_url   = DAOFactory::getDao('PulsestormStackexchangeSites')->getAll($by='site_url');
             
@@ -109,6 +109,7 @@ SQL;
         $rows = $this->getDataRowsAsArrays($this->execute($sql, $params));
         return $rows;
     }
+    
     public function getSingleItem($account_id, $user_is, $site_code)
     {
         $sql = 'SELECT * FROM ' . $this->_getTableName() . ' ' .
@@ -126,5 +127,11 @@ SQL;
         
         $item = array_shift($rows);
         return $item;
+    }
+    
+    public function updateAccountAndUserId($o)
+    {
+        var_dump($o);
+        exit;
     }
 }

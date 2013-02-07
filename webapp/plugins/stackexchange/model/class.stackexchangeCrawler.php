@@ -160,6 +160,7 @@ class stackexchangeCrawler {
         $type = self::getObjectType($object);
         $o    = DAOFactory::getDAO($type);        
         $o->setNetwork($network)->initTable();
+        
         $o->insertOrUpdate($object);
     }
     
