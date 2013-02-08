@@ -128,6 +128,20 @@ SQL;
         $item = array_shift($rows);
         return $item;
     }
+
+    public function getAccountIdFromUserAndNetwork($user_id,$network)
+    {
+        $sql = "SELECT account_id_stackexchange FROM " . $this->_getTableName() . " " .
+        "WHERE account_id_network_site = ? AND stackexchange_network = ?";
+        
+        $params = array(
+            1=>$user_id,
+            2=>$network);
+        
+        $rows = $this->getDataRowsAsArrays($this->execute($sql, $params));
+        $row  = array_shift($rows);
+        return $row['account_id_stackexchange'];
+    }
     
     public function updateAccountAndUserId($o)
     {

@@ -321,7 +321,6 @@ class PulsestormStackexchangeCrawlSyncMysql
     protected function _updateUsersFromStackExchangeNetwork($network)
     {        
         $ids = $this->_getUserIdsFromStackExchangeNetwork($network);
-        
         if(!$ids)
         {
             return;
@@ -385,12 +384,15 @@ class PulsestormStackexchangeCrawlSyncMysql
     
     protected function _generateEmptyQuestionObjectForUpdate($row, $network)
     {
+        $user_id = DAOFactory::getDao('PulsestormStackexchangeAccountids')
+        ->getAccountIdFromUserAndNetwork($row['owner_id'],$network);
+    
         $o = new stdClass;
         $o->post_id         = $network . '-' . $row['question_id'];        
-        $o->author_username = $row['owner_id'];
-        $o->author_fullname = $row['owner_id'];
+        $o->author_username = $user_id;
+        $o->author_fullname = $user_id;
         $o->author_avatar   = 'XX';
-        $o->author_user_id  = $row['owner_id'];        
+        $o->author_user_id  = $user_id;        
         $o->post_text       = $row['body'];
         $o->is_protected    = '0';
         $o->pub_date        = $row['creation_date'];
