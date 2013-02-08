@@ -325,6 +325,8 @@ class PulsestormStackexchangeCrawlSyncMysql
         {
             return;
         }        
+        
+        
         $raw_ids = $this->_getRawAccountInformationFromApi($ids, $network);        
         $this->_processRawIdsWithCrawler($raw_ids);        
         $this->_updateUsersFromStackExchangeAccounts();        

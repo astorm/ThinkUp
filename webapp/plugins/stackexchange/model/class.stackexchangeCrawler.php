@@ -284,7 +284,7 @@ class stackexchangeCrawler {
             $params = array(
             'site'          =>$network,
             'pagesize'      =>100,
-            'page'          =>$c,
+            'page'          =>1, //$c,   since we're pre-chunking IDs, we don't need to paginate
             'access_token'  =>$access_token,            
             'key'           =>$consumer_key
             );
