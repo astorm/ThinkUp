@@ -226,7 +226,7 @@ abstract class PulsestormStackexchangeAbstractMysql extends PDODAO
         
     public function log($message)
     {
-        file_put_contents('/tmp/test.log',"$message\n",FILE_APPEND);       
+        //file_put_contents('/tmp/test.log',"$message\n",FILE_APPEND);       
     }
     
     public function getResultSetAll()

@@ -415,6 +415,7 @@ class PulsestormStackexchangeCrawlSyncMysql
         $user->post_count       = null;
         $user->user_id          = null;
         $user->location         = null;
+        $user->is_verified      = null;
         $user->description      = null;
         $user->url              = null;
         $user->is_protected     = null;
