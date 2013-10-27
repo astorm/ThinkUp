@@ -344,7 +344,7 @@ class FacebookCrawler {
                                 foreach ($post_comments as $c) {
                                     if (isset($c->from)) {
                                         $comment_id = explode("_", $c->id);
-                                        $comment_id = $comment_id[2];
+                                        $comment_id = $comment_id[sizeof($comment_id)-1];
                                         //only add to queue if not already in storage
                                         $comment_in_storage = $post_dao->getPost($comment_id, $network);
                                         if (!isset($comment_in_storage)) {
