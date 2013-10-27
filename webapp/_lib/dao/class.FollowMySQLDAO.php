@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -53,7 +53,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':follower_id'=>(string)$follower_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataIsReturned($ps);
@@ -69,7 +69,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':network'=>$network,
             ':debug'=>$debug_api_call
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getUpdateCount($ps);
@@ -85,7 +85,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':network'=>$network,
             ':debug'=>$debug_api_call
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getUpdateCount($ps);
@@ -101,7 +101,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':network'=>$network,
             ':debug'=>$debug_api_call
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getInsertCount($ps);
@@ -118,7 +118,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -135,7 +135,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -154,7 +154,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -169,7 +169,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -183,7 +183,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -196,7 +196,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -210,7 +210,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataCountResult($ps);
@@ -228,7 +228,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowAsObject($ps, "User");
@@ -239,7 +239,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
         $q .= "FROM #prefix#follows AS f ";
         $q .= "WHERE network=:network AND active = 1 ORDER BY f.last_seen ASC LIMIT 1;";
         $vars = array( ':network'=>$network );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsArray($ps);
     }
@@ -259,7 +259,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -283,7 +283,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsArrays($ps);
     }
@@ -306,7 +306,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsArrays($ps);
     }
@@ -330,8 +330,55 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
         }
         $q .= "AND f.user_id = :user_id AND f.network=:network AND f.network=u.network AND active=1 ";
         $q .= "AND follower_count > 1000 AND friend_count > 0 AND friend_count < (follower_count/2) ";
-        $q .= "ORDER BY likelihood_of_follow ASC, u.follower_count DESC LIMIT :limit;";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $q .= "AND u.is_verified = 0 ORDER BY likelihood_of_follow ASC, u.follower_count DESC LIMIT :limit;";
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        return $this->getDataRowsAsObjects($ps, 'User');
+    }
+
+    public function getVerifiedFollowersByDay($user_id, $network, $days_ago=0, $limit=10) {
+        $vars = array(
+            ':user_id'=>(string)$user_id,
+            ':network'=>$network,
+            ':days_ago'=>(int)$days_ago,
+            ':limit'=>(int)$limit
+        );
+        $q  = "SELECT u.* FROM #prefix#users AS u ";
+        $q .= "INNER JOIN #prefix#follows AS f ON u.user_id = f.follower_id ";
+        $q .= "WHERE f.first_seen >= date_sub(current_date, INTERVAL :days_ago day) ";
+        if ($days_ago > 0) {
+            $end_days_ago = $days_ago-1;
+            $q .= "AND f.first_seen <= date_sub(current_date, INTERVAL :end_days_ago day) ";
+            $vars['end_days_ago'] = $end_days_ago;
+        }
+        $q .= "AND f.user_id = :user_id AND f.network = :network AND u.network=f.network AND active=1 ";
+        $q .= "AND u.is_verified = 1 ";
+        $q .= "LIMIT :limit;";
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        return $this->getDataRowsAsObjects($ps, 'User');
+    }
+
+    public function getFollowersFromLocationByDay($user_id, $network, $location, $days_ago=0, $limit=10) {
+        $vars = array(
+            ':user_id'=>(string)$user_id,
+            ':network'=>$network,
+            ':location'=>$location,
+            ':days_ago'=>(int)$days_ago,
+            ':limit'=>(int)$limit
+        );
+        $q  = "SELECT u.* FROM #prefix#users AS u ";
+        $q .= "INNER JOIN #prefix#follows AS f ON u.user_id = f.follower_id ";
+        $q .= "WHERE f.first_seen >= date_sub(current_date, INTERVAL :days_ago day) ";
+        if ($days_ago > 0) {
+            $end_days_ago = $days_ago-1;
+            $q .= "AND f.first_seen <= date_sub(current_date, INTERVAL :end_days_ago day) ";
+            $vars['end_days_ago'] = $end_days_ago;
+        }
+        $q .= "AND f.user_id = :user_id AND f.network = :network AND u.network=f.network AND active=1 ";
+        $q .= "AND u.location = :location ";
+        $q .= "LIMIT :limit;";
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, 'User');
     }
@@ -350,7 +397,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -370,7 +417,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -389,7 +436,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -407,7 +454,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -428,7 +475,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -448,7 +495,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':count'=>(int)$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -468,7 +515,7 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':network'=>$network,
             ':instanceuser_id'=>$instance_uid
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -487,9 +534,147 @@ class FollowMySQLDAO extends PDODAO implements FollowDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
+    }
+
+    public function getFolloweesRepliedToThisWeekLastYear($user_id, $network) {
+        // Get dates for this week, last year
+        $datetime = new DateTime('now');
+        $day = $datetime->format('l');
+        $datetime->modify("last year");
+        $datetime->modify("last " . $day);
+        $date_low = $datetime->format('Y-m-d');
+        $datetime->modify("next " . $day);
+        $date_high = $datetime->format('Y-m-d');
+
+        $q = "SELECT DISTINCT u.* FROM #prefix#posts AS p ";
+        $q .= "INNER JOIN #prefix#users AS u ON u.user_id = p.in_reply_to_user_id AND u.network = p.network ";
+        $q .= "INNER JOIN #prefix#follows AS f ON f.user_id = p.in_reply_to_user_id AND f.network = p.network ";
+        $q .= "WHERE p.author_user_id=:user_id AND p.network=:network ";
+        $q .= "AND (p.pub_date>=:date_low AND p.pub_date<=:date_high) AND p.in_reply_to_user_id IS NOT NULL ";
+        $q .= "AND f.follower_id=:user_id ";
+        $q .= "LIMIT 12 ";
+
+        $vars = array(
+            ':user_id' => (string)$user_id,
+            ':network' => $network,
+            ':date_low' => $date_low,
+            ':date_high' => $date_high
+        );
+
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        $all_user_rows = $this->getDataRowsAsArrays($ps);
+        $followees = array();
+        foreach ($all_user_rows as $user_row) {
+            $followee = new User($user_row);
+            $followees[] = $followee;
+        }
+
+        return $followees;
+    }
+
+    public function searchFollowers(array $keywords, $network, $user_id, $page_number=1, $page_count=20) {
+        //parse advanced operators
+        $name_keywords = array();
+        $description_keywords = array();
+        foreach ($keywords as $keyword) {
+            if (substr($keyword, 0, strlen('name:')) == 'name:') {
+                $name_keywords[] = substr($keyword, strlen('name:'), strlen($keyword));
+            } else {
+                $description_keywords[] = $keyword;
+            }
+        }
+
+        $vars = array(
+            ':user_id'=>(string)$user_id,
+            ':network'=>$network,
+        );
+
+        $q  = "SELECT u.*, ".$this->getAverageTweetCount()." ";
+        $q .= "FROM #prefix#users u ";
+        $q .= "INNER JOIN #prefix#follows f ON f.follower_id = u.user_id AND f.network = u.network ";
+        $q .= "WHERE f.user_id=:user_id AND u.network=:network AND (";
+
+        if (count($name_keywords)>0 && count($description_keywords) >0 ) {
+            $q .= "(";
+            $counter = 0;
+            foreach ($description_keywords as $keyword) {
+                $q .= " u.description LIKE :keyword_d".$counter." ";
+                if ($keyword != end($description_keywords)) {
+                    $q .= "AND";
+                }
+                $counter++;
+            }
+            $q .= ") AND ( ";
+            $counter = 0;
+            foreach ($name_keywords as $keyword) {
+                $q .= " u.full_name LIKE :keyword_n".$counter." ";
+                if ($keyword != end($name_keywords)) {
+                    $q .= "AND";
+                }
+                $counter++;
+            }
+            $q .= ")) ";
+            $counter = 0;
+            foreach ($description_keywords as $keyword) {
+                $vars[':keyword_d'.$counter] = '%'.$keyword.'%';
+                $counter++;
+            }
+            $counter = 0;
+            foreach ($name_keywords as $keyword) {
+                $vars[':keyword_n'.$counter] = '%'.$keyword.'%';
+                $counter++;
+            }
+        } elseif (count($name_keywords)>0 ) {
+            $counter = 0;
+            foreach ($name_keywords as $keyword) {
+                $q .= " u.full_name LIKE :keyword_n".$counter." ";
+                if ($keyword != end($name_keywords)) {
+                    $q .= "AND";
+                }
+                $counter++;
+            }
+            $q .= ") ";
+            $counter = 0;
+            foreach ($name_keywords as $keyword) {
+                $vars[':keyword_n'.$counter] = '%'.$keyword.'%';
+                $counter++;
+            }
+        } elseif (count($description_keywords)>0 ) {
+            $counter = 0;
+            foreach ($description_keywords as $keyword) {
+                $q .= " u.description LIKE :keyword_d".$counter." ";
+                if ($keyword != end($description_keywords)) {
+                    $q .= "AND";
+                }
+                $counter++;
+            }
+            $q .= ") ";
+            $counter = 0;
+            foreach ($description_keywords as $keyword) {
+                $vars[':keyword_d'.$counter] = '%'.$keyword.'%';
+                $counter++;
+            }
+        }
+        $q .= "ORDER BY first_seen DESC ";
+        if ($page_count > 0) {
+            $q .= "LIMIT :start_on_record, :limit;";
+        } else {
+            $q .= ';';
+        }
+
+        if ($page_count > 0) {
+            $vars[':limit'] = (int)$page_count;
+            $vars[':start_on_record'] = (int)$start_on_record;
+        }
+
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+
+        return $this->getDataRowsAsObjects($ps, 'User');
     }
 }

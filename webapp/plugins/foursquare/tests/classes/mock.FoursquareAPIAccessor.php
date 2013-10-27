@@ -8,7 +8,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -69,6 +69,7 @@ class FoursquareAPIAccessor {
         $url = str_replace('/', '_', $url);
         $url = str_replace('&', '-', $url);
         $url = str_replace('?', '-', $url);
+        $url = str_replace(':', '-', $url);
         // Decode the JSON in the reply
         return self::decodeFileContents($FAUX_DATA_PATH.$url);
     }
@@ -160,6 +161,7 @@ class FoursquareAPIAccessor {
         $url = str_replace('/', '_', $url);
         $url = str_replace('&', '-', $url);
         $url = str_replace('?', '-', $url);
+        $url = str_replace(':', '-', $url);
         return self::decodeFileContents($FAUX_DATA_PATH.$url, $decode_json);
     }
     /**

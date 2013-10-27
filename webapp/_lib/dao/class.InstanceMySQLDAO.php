@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -85,7 +85,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         if (!$owner->is_admin) {
             $vars[':owner_id'] = $owner->id;
         }
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
@@ -100,7 +100,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':network'=>$network,
             ':viewer_id'=>(string)($viewer_id ? $viewer_id : $network_user_id)
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getInsertId($ps);
     }
@@ -112,7 +112,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':username'=>$network_username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }
@@ -128,7 +128,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         $vars = array(
             ':owner'=>$owner_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -149,7 +149,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         }
         $q .= "ORDER BY crawler_last_run ";
         $q .= $order." LIMIT 1";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -164,7 +164,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':username'=>$username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -178,7 +178,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         $vars = array(
             ':id'=>$instance_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -193,7 +193,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':username'=>$username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -207,7 +207,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':user_id'=>(string)$network_user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -224,12 +224,15 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         $vars = array(
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
 
-    public function getByOwner($owner, $force_not_admin = false, $only_active=false) {
+    public function getByOwner(Owner $owner, $force_not_admin = false, $only_active=false) {
+        if ($owner == null) {
+            return null;
+        }
         $admin_status = (!$force_not_admin && $owner->is_admin ? true : false);
         $vars = array(
             ':owner_id'=>$owner->id
@@ -251,7 +254,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             $q .= "is_active = 1 ";
         }
         $q .= "ORDER BY crawler_last_run DESC;";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
@@ -261,7 +264,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         $q .= "FROM ".$this->getTableName()." ";
         $q .= $this->getMetaTableJoin();
         $q .= "WHERE is_public = 1 and is_active=1 ORDER BY crawler_last_run DESC;";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
@@ -292,7 +295,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         if ($admin_status) {
             unset ($vars[':ownerid']);
         }
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
@@ -306,7 +309,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':instance_id'=>$instance_id,
             ':public'=>$public
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }
@@ -320,7 +323,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':instance_id'=>$instance_id,
             ':active'=>$active
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }
@@ -346,7 +349,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':network' => $network,
             ':num_posts' => $num_posts_max
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $result = $this->getDataRowAsArray($this->execute($q, $vars));
 
         if ($result['num_posts'] > $num_posts_max) {
@@ -388,7 +391,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':user_id' => (string)$network_user_id,
             ':network' => $network,
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $result = $this->getDataRowAsArray($this->execute($q, $vars));
 
         $percent_replies = 0;
@@ -418,7 +421,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':user_id'      => (string)$i->network_user_id,
             ':network'      => $i->network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowAsArray($ps);
         $owner_favs_in_system = $result['owner_favs_in_system'];
@@ -426,7 +429,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         //former subquery 2 for total_posts_in_system
         $q = "SELECT COUNT(*) AS total_posts_in_system FROM #prefix#posts ";
         $q .= "WHERE author_user_id=:user_id AND network = :network";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowAsArray($ps);
         $total_posts_in_system = $result['total_posts_in_system'];
@@ -434,7 +437,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         //former subquery 3 for total_follows_in_system
         $q = "SELECT COUNT(*) AS total_follows_in_system FROM #prefix#follows ";
         $q .= "WHERE user_id=:user_id AND active=1 AND network = :network";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowAsArray($ps);
         $total_follows_in_system = $result['total_follows_in_system'];
@@ -444,7 +447,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         //        $q = "SELECT pub_date FROM #prefix#posts ";
         //        $q .= "WHERE author_user_id = :user_id AND network = :network ";
         //        $q .= "ORDER BY pub_date ASC LIMIT 1";
-        //        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        //        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         //        $ps = $this->execute($q, $vars);
         //        $result = $this->getDataRowAsArray($ps);
         //        $earliest_post_in_system = $result['earliest_post_in_system'];
@@ -511,7 +514,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             $vars[':tpbo'] = $user_xml_total_posts_by_owner;
         }
 
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         $status_message = "Updated ".$i->network_username."'s system status.";
@@ -529,7 +532,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
         $vars = array(
             ':id'=>$id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }
@@ -543,7 +546,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':username'=>$username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataIsReturned($ps);
     }
@@ -556,7 +559,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':username'=>$username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowAsArray($ps);
         if (isset($result['is_public'])) {
@@ -577,7 +580,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':viewer_id'=>(string)$viewer_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, $this->object_name);
     }
@@ -591,7 +594,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':viewer_id'=>(string)$viewer_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, $this->object_name);
     }
@@ -599,7 +602,7 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
     public function getHoursSinceLastCrawlerRun() {
         $q = "SELECT round((unix_timestamp( NOW() ) - unix_timestamp(crawler_last_run )) / 3600, 0) as hours_since_last_run ";
         $q .= "FROM ".$this->getTableName()." WHERE is_active=1 ORDER BY crawler_last_run ASC LIMIT 1";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q);
         $result = $this->getDataRowsAsArrays($ps);
         if ($result && isset($result[0]) ) {
@@ -615,7 +618,17 @@ class InstanceMySQLDAO extends PDOCorePluginDAO implements InstanceDAO {
             ':id'=>$id,
             ':network_username'=>$network_username
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        return $this->getUpdateCount($ps);
+    }
+
+    public function setPostArchiveLoaded($network_user_id, $network) {
+        $q = "UPDATE ".$this->getTableName()." SET is_archive_loaded_posts = 1 WHERE network_user_id = :network_id AND";
+        $q .= " network=:network";
+        $vars[':network_id'] = $network_user_id;
+        $vars[':network'] = $network;
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }

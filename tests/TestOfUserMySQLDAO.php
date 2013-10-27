@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -44,7 +44,7 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
         //Insert test data into test table
         $builders[] = FixtureBuilder::build('users', array('user_id'=>12, 'user_name'=>'jack',
         'full_name'=>'Jack Dorsey', 'avatar'=>'avatar.jpg', 'location'=>'San Francisco',
-        'network'=>'twitter'));
+        'is_verified'=>1, 'network'=>'twitter'));
 
         //Insert test data into test table
         $builders[] = FixtureBuilder::build('users', array('user_id'=>13, 'user_name'=>'zuck',
@@ -130,8 +130,8 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
 
         $user_array = array('user_id'=>'13', 'user_name'=>'ginatrapani', 'full_name'=>'Gina Trapani',
         'avatar'=>'avatar.jpg', 'location'=>'NYC', 'description'=>'Blogger', 'url'=>'http://ginatrapani.org',
-        'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter',
-        'last_post_id'=>'abc102');
+        'is_verified'=>1, 'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000,
+        'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter', 'last_post_id'=>'abc102');
         $user = new User($user_array, 'Test Insert');
         $this->assertEqual($user_dao->updateUser($user), 1, "1 user inserted");
         $user_from_db = $user_dao->getDetails('13', 'twitter');
@@ -139,10 +139,12 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
         $this->assertEqual($user_from_db->username, 'ginatrapani');
         $this->assertEqual($user_from_db->avatar, 'avatar.jpg');
         $this->assertEqual($user_from_db->location, 'NYC');
+        $this->assertTrue($user_from_db->is_verified);
 
         $user_array = array('user_id'=>13, 'user_name'=>'ginatrapanichanged', 'full_name'=>'Gina Trapani ',
         'avatar'=>'avatara.jpg', 'location'=>'San Diego', 'description'=>'Blogger', 'url'=>'http://ginatrapani.org',
-        'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter');
+        'is_verified'=>0, 'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000,
+        'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter');
         $user1 = new User($user_array, 'Test Update');
         $this->assertEqual($user_dao->updateUser($user1), 1, "1 row updated");
         $user_from_db = $user_dao->getDetails(13, 'twitter');
@@ -150,11 +152,13 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
         $this->assertEqual($user_from_db->username, 'ginatrapanichanged');
         $this->assertEqual($user_from_db->avatar, 'avatara.jpg');
         $this->assertEqual($user_from_db->location, 'San Diego');
+        $this->assertFalse($user_from_db->is_verified);
 
         //Test no username set
         $user_array = array('user_id'=>13, 'user_name'=>null, 'full_name'=>'Gina Trapani ',
         'avatar'=>'avatara.jpg', 'location'=>'San Diego', 'description'=>'Blogger', 'url'=>'http://ginatrapani.org',
-        'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter');
+        'is_verified'=>1, 'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05',
+        'network'=>'twitter');
         $user1 = new User($user_array, 'Test Update');
         $this->assertEqual($user_dao->updateUser($user1), 0);
     }
@@ -167,13 +171,13 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
 
         $user_array1 = array('id'=>2, 'user_id'=>'13', 'user_name'=>'ginatrapani', 'full_name'=>'Gina Trapani',
         'avatar'=>'avatar.jpg', 'location'=>'NYC', 'description'=>'Blogger', 'url'=>'http://ginatrapani.org',
-        'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter',
-        'last_post_id'=>'abc123');
+        'is_verified'=>1, 'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000,
+        'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter', 'last_post_id'=>'abc123');
         $user1 = new User($user_array1, 'Test');
         $user_array2 = array('id'=>3, 'user_id'=>'14', 'user_name'=>'anildash', 'full_name'=>'Anil Dash',
         'avatar'=>'avatar.jpg', 'location'=>'NYC', 'description'=>'Blogger', 'url'=>'http://ginatrapani.org',
-        'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000, 'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter',
-        'last_post_id'=>'abc456');
+        'is_verified'=>1, 'is_protected'=>0, 'follower_count'=>5000, 'post_count'=>1000,
+        'joined'=>'2007-03-06 13:48:05', 'network'=>'twitter', 'last_post_id'=>'abc456');
         $user2 = new User($user_array2, 'Test');
 
         $users_to_update = array($user1, $user2);
@@ -203,5 +207,217 @@ class TestOfUserMySQLDAO extends ThinkUpUnitTestCase {
 
         $user = $user_dao->getUserByName('gina', 'twitter');
         $this->assertEqual($user, null);
+    }
+
+    public function testDeleteUsersByHashtagId() {
+        $user_dao = DAOFactory::getDAO('UserDAO');
+
+        $user = $user_dao->getUserByName('ecucurella', 'twitter');
+        $this->assertNull($user);
+        $user = $user_dao->getUserByName('vetcastellnou', 'twitter');
+        $this->assertNull($user);
+        $user = $user_dao->getUserByName('efectivament', 'twitter');
+        $this->assertNull($user);
+
+        $builder = $this->buildSearchData();
+
+        $user = $user_dao->getUserByName('ecucurella', 'twitter');
+        $this->assertNotNull($user);
+        $this->assertEqual($user->full_name, 'Eduard Cucurella');
+        $user = $user_dao->getUserByName('vetcastellnou', 'twitter');
+        $this->assertNotNull($user);
+        $this->assertEqual($user->full_name, 'Veterans Castellnou');
+        $user = $user_dao->getUserByName('efectivament', 'twitter');
+        $this->assertNotNull($user);
+        $this->assertEqual($user->full_name, 'efectivament');
+
+        $result = $user_dao->deleteUsersByHashtagId(1);
+        $this->assertEqual($result,2);
+
+        $user = $user_dao->getUserByName('ecucurella', 'twitter');
+        $this->assertNull($user);
+        $user = $user_dao->getUserByName('vetcastellnou', 'twitter');
+        $this->assertNotNull($user);
+        $this->assertEqual($user->full_name, 'Veterans Castellnou');
+        $user = $user_dao->getUserByName('efectivament', 'twitter');
+        $this->assertNull($user);
+    }
+
+    private function buildSearchData() {
+        $builders = array();
+
+        $builders[] = FixtureBuilder::build('hashtags_posts',
+        array('post_id' => 1, 'hashtag_id' => 1, 'network' => 'twitter'));
+        $builders[] = FixtureBuilder::build('hashtags_posts',
+        array('post_id' => 3, 'hashtag_id' => 1, 'network' => 'twitter'));
+
+        $builders[] = FixtureBuilder::build('posts', array(
+            'post_id' => '1',
+            'author_user_id' => '100',
+            'author_username' => 'ecucurella',
+            'author_fullname' => 'Eduard Cucurella',
+            'author_avatar' => 'http://aa.com',
+            'author_follower_count' => 0,
+            'post_text' => '#Messi is the best http://flic.kr/p/ http://flic.kr/a/',
+            'is_protected' => 0,
+            'source' => '<a href=""></a>',
+            'location' => 'BCN',
+            'place' => '',
+            'place_id' => '',
+            'geo' => '',
+            'pub_date' => '2013-02-28 11:02:34',
+            'in_reply_to_user_id' => '',
+            'in_reply_to_post_id' => '',
+            'reply_count_cache' => 1,
+            'is_reply_by_friend' => 0,
+            'in_retweet_of_post_id' => '',
+            'old_retweet_count_cache' => 0,
+            'is_retweet_by_friend' => 0,
+            'reply_retweet_distance' => 0,
+            'network' => 'twitter',
+            'is_geo_encoded' => 0,
+            'in_rt_of_user_id' => '',
+            'retweet_count_cache' => 0,
+            'retweet_count_api' => 0,
+            'favlike_count_cache' => 0));
+
+        $builders[] = FixtureBuilder::build('posts', array(
+            'post_id' => '2',
+            'author_user_id' => '101',
+            'author_username' => 'vetcastellnou',
+            'author_fullname' => 'Veterans Castellnou',
+            'author_avatar' => 'http://aa.com',
+            'author_follower_count' => 0,
+            'post_text' => 'Post without any hashtag http://flic.kr/p/',
+            'is_protected' => 0,
+            'source' => '<a href=""></a>',
+            'location' => 'BCN',
+            'place' => '',
+            'place_id' => '',
+            'geo' => '',
+            'pub_date' => '2013-02-28 11:02:34',
+            'in_reply_to_user_id' => '',
+            'in_reply_to_post_id' => '',
+            'reply_count_cache' => 1,
+            'is_reply_by_friend' => 0,
+            'in_retweet_of_post_id' => '',
+            'old_retweet_count_cache' => 0,
+            'is_retweet_by_friend' => 0,
+            'reply_retweet_distance' => 0,
+            'network' => 'twitter',
+            'is_geo_encoded' => 0,
+            'in_rt_of_user_id' => '',
+            'retweet_count_cache' => 0,
+            'retweet_count_api' => 0,
+            'favlike_count_cache' => 0));
+
+        $builders[] = FixtureBuilder::build('posts', array(
+            'post_id' => '3',
+            'author_user_id' => '102',
+            'author_username' => 'efectivament',
+            'author_fullname' => 'efectivament',
+            'author_avatar' => 'http://aa.com',
+            'author_follower_count' => 0,
+            'post_text' => 'Post with #Messi hashtag http://flic.kr/p/',
+            'is_protected' => 0,
+            'source' => '<a href=""></a>',
+            'location' => 'BCN',
+            'place' => '',
+            'place_id' => '',
+            'geo' => '',
+            'pub_date' => '2013-02-28 11:02:34',
+            'in_reply_to_user_id' => '',
+            'in_reply_to_post_id' => '',
+            'reply_count_cache' => 1,
+            'is_reply_by_friend' => 0,
+            'in_retweet_of_post_id' => '',
+            'old_retweet_count_cache' => 0,
+            'is_retweet_by_friend' => 0,
+            'reply_retweet_distance' => 0,
+            'network' => 'twitter',
+            'is_geo_encoded' => 0,
+            'in_rt_of_user_id' => '',
+            'retweet_count_cache' => 0,
+            'retweet_count_api' => 0,
+            'favlike_count_cache' => 0));
+
+        $builders[] = FixtureBuilder::build('posts', array(
+            'post_id' => '4',
+            'author_user_id' => '102',
+            'author_username' => 'efectivament',
+            'author_fullname' => 'efectivament',
+            'author_avatar' => 'http://aa.com',
+            'author_follower_count' => 0,
+            'post_text' => 'Post without any hashtag 2',
+            'is_protected' => 0,
+            'source' => '<a href=""></a>',
+            'location' => 'BCN',
+            'place' => '',
+            'place_id' => '',
+            'geo' => '',
+            'pub_date' => '2013-02-28 11:02:34',
+            'in_reply_to_user_id' => '',
+            'in_reply_to_post_id' => '',
+            'reply_count_cache' => 1,
+            'is_reply_by_friend' => 0,
+            'in_retweet_of_post_id' => '',
+            'old_retweet_count_cache' => 0,
+            'is_retweet_by_friend' => 0,
+            'reply_retweet_distance' => 0,
+            'network' => 'twitter',
+            'is_geo_encoded' => 0,
+            'in_rt_of_user_id' => '',
+            'retweet_count_cache' => 0,
+            'retweet_count_api' => 0,
+            'favlike_count_cache' => 0));
+
+        $builders[] = FixtureBuilder::build('links', array(
+            'url'=>'http://flic.kr/p/',
+            'title'=>'Link ',
+            'post_key'=>1,
+            'expanded_url'=>'',
+            'error'=>'',
+            'image_src'=>'http://flic.kr/thumbnail.png'));
+
+        $builders[] = FixtureBuilder::build('links', array(
+            'url'=>'http://flic.kr/a/',
+            'title'=>'Link ',
+            'post_key'=>1,
+            'expanded_url'=>'',
+            'error'=>'',
+            'image_src'=>'http://flic.kr/thumbnail.png'));
+
+        $builders[] = FixtureBuilder::build('links', array(
+            'url'=>'http://flic.kr/p/',
+            'title'=>'Link ',
+            'post_key'=>2,
+            'expanded_url'=>'',
+            'error'=>'',
+            'image_src'=>'http://flic.kr/thumbnail.png'));
+
+        $builders[] = FixtureBuilder::build('links', array(
+            'url'=>'http://flic.kr/p/',
+            'title'=>'Link ',
+            'post_key'=>3,
+            'expanded_url'=>'',
+            'error'=>'',
+            'image_src'=>'http://flic.kr/thumbnail.png'));
+
+        $builders[] = FixtureBuilder::build('users', array(
+            'user_id'=>100,
+            'user_name'=>'ecucurella',
+            'full_name'=>'Eduard Cucurella'));
+
+        $builders[] = FixtureBuilder::build('users', array(
+            'user_id'=>101,
+            'user_name'=>'vetcastellnou',
+            'full_name'=>'Veterans Castellnou'));
+
+        $builders[] = FixtureBuilder::build('users', array(
+            'user_id'=>102,
+            'user_name'=>'efectivament',
+            'full_name'=>'efectivament'));
+
+        return $builders;
     }
 }

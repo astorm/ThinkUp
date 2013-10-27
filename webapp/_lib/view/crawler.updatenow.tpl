@@ -1,5 +1,5 @@
-{include file="_header.tpl" enable_bootstrap="true"}
-{include file="_statusbar.tpl" enable_bootstrap="true"}
+{include file="_header.tpl" enable_bootstrap=1}
+{include file="_statusbar.tpl" enable_bootstrap=1}
 
 
 <div class="container">
@@ -10,7 +10,7 @@
     <div class="embossed-block">
         <ul>
           <li>
-             Update ThinkUp Data
+             Updating...
           </li>
         </ul>
     </div>
@@ -24,10 +24,10 @@
 <div class="row">
     <div class="span3">&nbsp;</div>
     <div class="span9">
-        {include file="_usermessage.tpl" enable_bootstrap="true"}
+        {include file="_usermessage.tpl" enable_bootstrap=1}
 </div>
 
 
 </div>
 
-{include file="_footer.tpl" enable_bootstrap="true"}
+{include file="_footer.tpl" enable_bootstrap=1}

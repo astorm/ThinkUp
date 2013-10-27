@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -229,7 +229,16 @@ class TestOfUtils extends ThinkUpUnitTestCase {
         $expected_url = 'http://testservername/my/path/to/thinkup/';
         $this->assertEqual($utils_url, $expected_url);
 
+        //SERVER_NAME, not HTTP_HOST
+        $_SERVER['HTTP_HOST'] = null;
+        $_SERVER['SERVER_NAME'] = 'mytestservername';
+        $_SERVER['HTTPS'] = null;
+        $utils_url = Utils::getApplicationURL();
+        $expected_url = 'http://mytestservername/my/path/to/thinkup/';
+        $this->assertEqual($utils_url, $expected_url);
+
         //no SSL
+        $_SERVER['SERVER_NAME'] = null;
         $_SERVER['HTTP_HOST'] = "mytestthinkup";
         $_SERVER['HTTPS'] = null;
         $utils_url = Utils::getApplicationURL();
@@ -293,6 +302,27 @@ class TestOfUtils extends ThinkUpUnitTestCase {
         $cfg->setValue('site_root_path', '/my/path and this space/to/thinkup/');
         $utils_url = Utils::getApplicationURL(false);
         $expected_url = 'http://localhost/my/path+and+this+space/to/thinkup/';
+        $this->assertEqual($utils_url, $expected_url);
+
+        //with capital letters in site_root_path
+        $_SERVER['HTTP_HOST'] = "localhost";
+        $cfg->setValue('site_root_path', '/ThinkUp/');
+        $utils_url = Utils::getApplicationURL(false);
+        $expected_url = 'http://localhost/ThinkUp/';
+        $this->assertEqual($utils_url, $expected_url);
+
+        //with capital letters and spaces in site_root_path
+        $_SERVER['HTTP_HOST'] = "localhost";
+        $cfg->setValue('site_root_path', '/Think Up/');
+        $utils_url = Utils::getApplicationURL(false);
+        $expected_url = 'http://localhost/Think+Up/';
+        $this->assertEqual($utils_url, $expected_url);
+
+        //with capital letters in host and in site_root_path
+        $_SERVER['HTTP_HOST'] = "LocalHost";
+        $cfg->setValue('site_root_path', '/Think Up/');
+        $utils_url = Utils::getApplicationURL(false);
+        $expected_url = 'http://localhost/Think+Up/';
         $this->assertEqual($utils_url, $expected_url);
     }
 }

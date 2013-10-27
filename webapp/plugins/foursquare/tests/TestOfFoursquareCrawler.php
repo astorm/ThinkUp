@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -59,13 +59,12 @@ class TestOfFoursquareCrawler extends ThinkUpUnitTestCase {
         $this->logger = Logger::getInstance();
         // Create an array with instance details
         $r = array('id'=>1, 'network_username'=>'aaronkalair@gmail.com', 'network_user_id'=>'113612142759476883204',
-        'network_viewer_id'=>'113612142759476883204', 'last_post_id'=>'0', 'last_page_fetched_replies'=>0,
-        'last_page_fetched_tweets'=>'0', 'total_posts_in_system'=>'0', 'total_replies_in_system'=>'0',
+        'network_viewer_id'=>'113612142759476883204', 'last_post_id'=>'0',
+        'total_posts_in_system'=>'0', 'total_replies_in_system'=>'0',
         'total_follows_in_system'=>'0', 'is_archive_loaded_replies'=>'0',
         'is_archive_loaded_follows'=>'0', 'crawler_last_run'=>'', 'earliest_reply_in_system'=>'',
         'avg_replies_per_day'=>'0', 'is_public'=>'0', 'is_active'=>'0', 'network'=>'foursquare',
-        'last_favorite_id' => '0', 'last_unfav_page_checked' => '0', 'last_page_fetched_favorites' => '0',
-        'owner_favs_in_system' => '0', 'total_posts_by_owner'=>0,
+        'last_favorite_id' => '0', 'owner_favs_in_system' => '0', 'total_posts_by_owner'=>0,
         'posts_per_day'=>0, 'posts_per_week'=>0, 'percentage_replies'=>0, 'percentage_links'=>0,
         'earliest_post_in_system'=>'2009-01-01 13:48:05', 'favorites_profile' => '0',
         'url' => 'http://www.fousquare.com/user/113612142759476883204', 'is_archive_loaded_posts'=> 1

@@ -5,7 +5,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -66,6 +66,13 @@ class GooglePlusAPIAccessor {
 
     private static function decodeFileContents($file_path, $decode_json=true) {
         $debug = (getenv('TEST_DEBUG')!==false) ? true : false;
+        $create_files = (getenv('CREATE_FILES')!==false) ? true : false;
+        if ($create_files) {
+            if($debug){
+                echo 'CREATING '.$file_path."\n\n";
+            }
+            exec('touch '.$file_path);
+        }
         if ($debug) {
             echo "READING LOCAL TEST DATA FILE: ".$file_path. '
 ';

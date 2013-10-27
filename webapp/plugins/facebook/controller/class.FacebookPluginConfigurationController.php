@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -122,7 +122,7 @@ class FacebookPluginConfigurationController extends PluginConfigurationControlle
         }
 
         $params = array('scope'=>'read_stream,user_likes,user_location,user_website,'.
-        'read_friendlists,friends_location,manage_pages,read_insights',
+        'read_friendlists,friends_location,manage_pages,read_insights,manage_pages',
         'state'=>SessionCache::get('facebook_auth_csrf'));
 
         $fbconnect_link = $facebook->getLoginUrl($params);
@@ -268,7 +268,7 @@ class FacebookPluginConfigurationController extends PluginConfigurationControlle
 
         if (!$user_dao->isUserInDB($fb_user_id, 'facebook')) {
             $r = array('user_id'=>$fb_user_id, 'user_name'=>$fb_username,'full_name'=>$fb_username, 'avatar'=>'',
-            'location'=>'', 'description'=>'', 'url'=>'', 'is_protected'=>'',  'follower_count'=>0,
+            'location'=>'', 'description'=>'', 'url'=>'', 'is_verified'=>'', 'is_protected'=>'',  'follower_count'=>0,
             'friend_count'=>0, 'post_count'=>0, 'last_updated'=>'', 'last_post'=>'', 'joined'=>'',
             'last_post_id'=>'', 'network'=>'facebook' );
             $u = new User($r, 'Owner info');
@@ -314,6 +314,7 @@ class FacebookPluginConfigurationController extends PluginConfigurationControlle
                 $val['location'] = '';
                 $val['description'] = '';
                 $val['url'] = '';
+                $val['is_verified'] = false;
                 $val['is_protected'] = false;
                 $val['follower_count'] = 0;
                 $val['post_count'] = 0;

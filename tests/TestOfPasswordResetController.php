@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -207,7 +207,16 @@ SQL;
         $owner = $dao->getByEmail('zaphod@hog.com');
         $this->assertTrue($owner->is_activated);
         $this->assertEqual($owner->account_status, '');
+        $this->assertEqual($owner->password_token, '');
         $this->assertEqual($owner->failed_logins, 0);
+
+        // Trying to use the same password reset token
+        $controller = new PasswordResetController(true);
+        $result = $controller->go();
+
+        // Error message should appear
+        $v_mgr = $controller->getViewManager();
+        $this->assertEqual($v_mgr->getTemplateDataItem('error_msg'), 'You have reached this page in error.');
     }
 
     public function testOfControllerWithRegistrationOpen() {

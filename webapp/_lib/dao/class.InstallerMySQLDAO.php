@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -404,7 +404,7 @@ class InstallerMySQLDAO extends PDODAO implements InstallerDAO  {
                             $index_columns = '';
                             // For each column in the index
                             foreach ($index_data['columns'] as $column_data) {
-                                if ($index_columns != '') $index_columns .= ',';
+                                if ($index_columns != '') {$index_columns .= ',';}
                                 // Add the field to the column list string
                                 $index_columns .= $column_data['fieldname'];
                                 if ($column_data['subpart'] != '') {

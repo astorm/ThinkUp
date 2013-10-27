@@ -24,13 +24,13 @@ ThinkUp{$post_id} = new function() {literal} {
   }
 
   this.serverResponse = function( data ) {
-    if (!data[0].status) return;
+    if (!data[0].status) {return;}
     var div = document.getElementById(ROOT);
     var txt = '';
     //console.debug(data);
     //console.debug('status ' + data[0].status);
     if ( data[0].status == 'failed') {
-        if ( data[0].message ) txt = '<div class="thinkup_error">Error: ' + data[0].message + '</div>';
+        if ( data[0].message ) {txt = '<div class="thinkup_error">Error: ' + data[0].message + '</div>';}
     } else {
     //    console.debug('post ' + data[0].post);
     //    console.debug('replies ' + data[0].replies[1].text);
@@ -74,7 +74,7 @@ ThinkUp{$post_id} = new function() {literal} {
           txt += ": " + data[0].replies[i].text + '</div><br clear="all">';
         }
     }
-    txt += 'Powered by <a href="http://thinkupapp.com">ThinkUp</a>';
+    txt += 'Powered by <a href="http://thinkup.com">ThinkUp</a>';
     div.innerHTML =  txt;  // assign new HTML into #ROOT
     div.style.display = 'block'; // make element visible
   }

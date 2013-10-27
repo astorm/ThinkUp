@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -111,14 +111,14 @@ class TestOfExportServiceUserDataController extends ThinkUpUnitTestCase {
         $this->simulateLogin('me@example.com', true);
         $controller = new ExportServiceUserDataController(true);
         $results = $controller->control();
-        $this->assertPattern('/setup does not support a library/', $results);
+        $this->assertPattern('/setup doesn\'t support/', $results);
     }
 
     public function testLoadExportView() {
         $this->simulateLogin('me@example.com', true);
         $controller = new ExportServiceUserDataController(true);
         $results = $controller->control();
-        $this->assertPattern('/Export Service User Data/', $results);
+        $this->assertPattern('/Export User Data/', $results);
     }
 
     public function testExport() {

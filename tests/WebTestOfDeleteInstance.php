@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -58,29 +58,28 @@ class WebTestOfDeleteInstance extends ThinkUpWebTestCase {
 
         $this->click("Settings");
         $this->click("Twitter");
-
-        $this->assertLink('ev');
-        $this->assertLink('thinkupapp');
-        $this->assertLink('linkbaiter');
-        $this->assertLink('shutterbug');
-        $this->assertSubmit('delete');
+        $this->assertLink('@ev');
+        $this->assertLink('@thinkupapp');
+        $this->assertLink('@linkbaiter');
+        $this->assertLink('@shutterbug');
+        $this->assertSubmit('Delete');
 
         //delete existing instance
-        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'delete', 'instance_id'=>'3',
+        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'Delete', 'instance_id'=>'3',
         'csrf_token' => self::TEST_CSRF_TOKEN));
         $this->assertText('Account deleted.');
-        $this->assertLink('thinkupapp');
-        $this->assertLink('linkbaiter');
-        $this->assertNoLink('shutterbug');
-        $this->assertSubmit('delete');
+        $this->assertLink('@thinkupapp');
+        $this->assertLink('@linkbaiter');
+        $this->assertNoLink('@shutterbug');
+        $this->assertSubmit('Delete');
 
         //delete non-existent instance
-        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'delete', 'instance_id'=>'231',
+        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'Delete', 'instance_id'=>'231',
         'csrf_token' => self::TEST_CSRF_TOKEN));
         $this->assertText("Instance doesn't exist.");
-        $this->assertLink('thinkupapp');
-        $this->assertLink('linkbaiter');
-        $this->assertSubmit('delete');
+        $this->assertLink('@thinkupapp');
+        $this->assertLink('@linkbaiter');
+        $this->assertSubmit('Delete');
 
         $this->click('Log Out');
         //        $this->assertText('You have successfully logged out');
@@ -93,7 +92,7 @@ class WebTestOfDeleteInstance extends ThinkUpWebTestCase {
         $this->click("Log In");
 
         //delete instance with no privileges
-        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'delete', 'instance_id'=>'2',
+        $this->post($this->url.'/account/index.php?p=twitter', array('action'=>'Delete', 'instance_id'=>'2',
         'csrf_token' => self::TEST_CSRF_TOKEN));
 
         $this->assertText("Insufficient privileges.");

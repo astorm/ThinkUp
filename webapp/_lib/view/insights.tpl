@@ -5,7 +5,6 @@
 
 {include file="_usermessage.tpl"}
 
-
 {if $message_header}
 
 <div class="row">
@@ -50,7 +49,7 @@
     <div class="span9">
         {if $i->filename neq ''}
             {assign var='tpl_filename' value=$i->filename|cat:'.tpl'}
-            <!-- including {$tpl_path}{$tpl_filename} -->
+            <!-- including {$tpl_filename} -->
             {include file=$tpl_path|cat:$tpl_filename}
         {/if}
     </div><!--/span9-->
@@ -77,4 +76,4 @@
 
     </div>
 </div>
-{include file="_footer.tpl"}
+{include file="_footer.tpl" linkify=1}

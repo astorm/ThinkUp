@@ -1,7 +1,8 @@
 <?php
 /*
  Plugin Name: Style Stats
- Description: Stats on different types of posts in the past week. (Saturdays)
+ Description: Stats on different types of posts in the past week.
+ When: Saturdays
  */
 /**
  *
@@ -11,7 +12,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -33,16 +34,17 @@ class StyleStatsInsight extends InsightPluginParent implements InsightPlugin {
 
     public function generateInsight(Instance $instance, $last_week_of_posts, $number_days) {
         parent::generateInsight($instance, $last_week_of_posts, $number_days);
+        $this->logger->logInfo("Begin generating insight", __METHOD__.','.__LINE__);
 
-        $in_test_mode =  ((isset($_SESSION["MODE"]) && $_SESSION["MODE"] == "TESTS") || getenv("MODE")=="TESTS");
-        //Only insert this insight if it's Saturday or if we're testing
-        if (date('w') == 6 || $in_test_mode ) {
+        if (self::shouldGenerateInsight('style_stats', $instance, $insight_date='today',
+        $regenerate_existing_insight=false, $day_of_week=6, count($last_week_of_posts),
+        $excluded_networks=array('foursquare'))) {
             $total_posts = array("questions" => 0, "quotations" => 0, "links" => 0, "photos" => 0);
             $total_replies = array("all" => 0, "questions" => 0, "quotations" => 0, "links" => 0, "photos" => 0);
             $average_replies = array("all" => 0, "questions" => 0, "quotations" => 0, "links" => 0, "photos" => 0);
             $total_reshares = array("all" => 0, "questions" => 0, "quotations" => 0, "links" => 0, "photos" => 0);
             $average_reshares = array("all" => 0, "questions" => 0, "quotations" => 0, "links" => 0, "photos" => 0);
-            if ( sizeof( $last_week_of_posts) > 5  && $instance->network != 'foursquare') {
+            if (sizeof( $last_week_of_posts) > 5) {
                 $this->logger->logSuccess("Calculating style stats ", __METHOD__.','.__LINE__);
                 foreach ($last_week_of_posts as $post) {
                     $total_replies["all"] += $post->reply_count_cache;
@@ -72,18 +74,45 @@ class StyleStatsInsight extends InsightPluginParent implements InsightPlugin {
                         }
                     }
                 }
-                $average_replies["all"] = round($total_replies["all"] / (sizeof($last_week_of_posts)) );
-                $average_reshares["all"] = round($total_reshares["all"] / (sizeof($last_week_of_posts)) );
+                if (sizeof($last_week_of_posts) > 0) {
+                    $average_replies["all"] = round($total_replies["all"] / (sizeof($last_week_of_posts)) );
+                    $average_reshares["all"] = round($total_reshares["all"] / (sizeof($last_week_of_posts)) );
+                } else {
+                    $average_replies["all"] = 0;
+                    $average_reshares["all"] = 0;
+                }
 
-                $average_replies["questions"] = round($total_replies["questions"] / $total_posts["questions"]);
-                $average_replies["quotations"] = round($total_replies["quotations"] / $total_posts["quotations"]);
-                $average_replies["links"] = round($total_replies["links"] / $total_posts["links"]);
-                $average_replies["photos"] = round($total_replies["photos"] / $total_posts["photos"]);
+                if ($total_posts["questions"] > 0 ) {
+                    $average_replies["questions"] = round($total_replies["questions"] / $total_posts["questions"]);
+                    $average_reshares["questions"] = round($total_reshares["questions"] / $total_posts["questions"]);
+                } else {
+                    $average_replies["questions"] = 0;
+                    $average_reshares["questions"] = 0;
+                }
 
-                $average_reshares["questions"] = round($total_reshares["questions"] / $total_posts["questions"]);
-                $average_reshares["quotations"] = round($total_reshares["quotations"] / $total_posts["quotations"]);
-                $average_reshares["links"] = round($total_reshares["links"] / $total_posts["links"]);
-                $average_reshares["photos"] = round($total_reshares["photos"] / $total_posts["photos"]);
+                if ($total_posts["quotations"] > 0) {
+                    $average_replies["quotations"] = round($total_replies["quotations"] / $total_posts["quotations"]);
+                    $average_reshares["quotations"] = round($total_reshares["quotations"] / $total_posts["quotations"]);
+                } else {
+                    $average_replies["quotations"] = 0;
+                    $average_reshares["quotations"] = 0;
+                }
+
+                if ($total_posts["links"] > 0) {
+                    $average_replies["links"] = round($total_replies["links"] / $total_posts["links"]);
+                    $average_reshares["links"] = round($total_reshares["links"] / $total_posts["links"]);
+                } else {
+                    $average_replies["links"] = 0;
+                    $average_reshares["links"] = 0;
+                }
+
+                if ($total_posts["photos"] > 0) {
+                    $average_replies["photos"] = round($total_replies["photos"] / $total_posts["photos"]);
+                    $average_reshares["photos"] = round($total_reshares["photos"] / $total_posts["photos"]);
+                } else {
+                    $average_replies["photos"] = 0;
+                    $average_reshares["photos"] = 0;
+                }
 
                 $insight_text = '';
                 arsort($total_posts);
@@ -95,9 +124,10 @@ class StyleStatsInsight extends InsightPluginParent implements InsightPlugin {
                     }
                     if ($insight_text == '') { //first item
                         $insight_text .= (($total == 0)?"None":$total)." of $this->username's posts this week ".
-                        "were $type";
+                        (($total == 1)?"was a":"were")." ".(($total == 1)?substr($type, 0, -1):$type);
                     } else {
-                        $insight_text .= (($total == 0)?"none":$total)." were $type";
+                        $insight_text .= (($total == 0)?"none":$total)." ".(($total == 1)?"was a":"were")." ".
+                        (($total == 1)?substr($type, 0, -1):$type);
                     }
                     if ($type == $last_type) {  //last item in list
                         $insight_text .= ".";
@@ -158,6 +188,8 @@ class StyleStatsInsight extends InsightPluginParent implements InsightPlugin {
                 " posts last week, not enough to calculate style stats ", __METHOD__.','.__LINE__);
             }
         }
+
+        $this->logger->logInfo("Done generating insight", __METHOD__.','.__LINE__);
     }
 
     private function endsWith($str, $end_str) {

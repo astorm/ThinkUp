@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -35,7 +35,7 @@ class StreamDataMySQLDAO extends PDODAO implements StreamDataDAO {
             ':data'  =>$content,
             ':network'  =>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $res = $this->getUpdateCount($ps);
         if (!$res) {
@@ -53,7 +53,7 @@ class StreamDataMySQLDAO extends PDODAO implements StreamDataDAO {
         $vars = array(
             ':network'  =>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $row = $this->getDataRowAsArray($ps);
         if ($row) {
@@ -73,7 +73,7 @@ class StreamDataMySQLDAO extends PDODAO implements StreamDataDAO {
         $vars = array(
             ':id' => $id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $res = $this->getUpdateCount($ps);
         if (!$res) {
@@ -83,7 +83,7 @@ class StreamDataMySQLDAO extends PDODAO implements StreamDataDAO {
 
     public function resetID() {
         $q = "ALTER TABLE #prefix#stream_data auto_increment = 1";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q);
     }
 }

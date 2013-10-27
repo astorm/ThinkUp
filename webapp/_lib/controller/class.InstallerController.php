@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -179,6 +179,9 @@ class InstallerController extends ThinkUpController {
      */
     private function step2() {
         $this->setViewTemplate('install.step2.tpl');
+        $this->addHeaderJavaScript('assets/js/jstz-1.0.4.min.js');
+        $this->addHeaderJavaScript('assets/js/jqBootstrapValidation.js');
+        $this->addHeaderJavaScript('assets/js/validate-fields.js');
 
         // make sure we have passed step 1
         if ( !$this->installer->checkStep1() ) {
@@ -197,7 +200,7 @@ class InstallerController extends ThinkUpController {
         $this->addToView('db_port', '');
         $this->addToView('tz_list', $this->getTimeZoneList());
         $this->addToView('current_tz', $current_tz);
-        $this->addToView('site_email', 'you@example.com');
+        $this->addToView('site_email', '');
     }
 
     /**
@@ -343,14 +346,14 @@ class InstallerController extends ThinkUpController {
                 "following commands:<br /><code>sudo touch " . escapeshellcmd(THINKUP_WEBAPP_PATH . "config.inc.php") .
                 "</code><br /><code>sudo chown $whoami " . escapeshellcmd(THINKUP_WEBAPP_PATH .
                 "config.inc.php") ."</code><br /><br />If you don't have root access, create the <code>" .
-                THINKUP_WEBAPP_PATH . "config.inc.php</code> file manually, and paste the following text into it.".
-                "<br /><br />Click the <strong>Next Step</strong> button below once you have done either.",
+                THINKUP_WEBAPP_PATH . "config.inc.php</code> file, show the contents of your config file below," .
+                " and copy and paste the text into the <code>config.inc.php</code> file.",
                 null, $disable_xss);
             } else {
                 $this->addErrorMessage("ThinkUp couldn't write the <code>config.inc.php</code> file.<br /><br />".
                 "You will need to create the <code>" .
-                THINKUP_WEBAPP_PATH . "config.inc.php</code> file manually, and paste the following text into it.".
-                "<br /><br />Click the <strong>Next Step</strong> button once this is done.", null, $disable_xss);
+                THINKUP_WEBAPP_PATH . "config.inc.php</code> file manually, and paste the following text into it.",
+                null, $disable_xss);
             }
             $this->addToView('config_file_contents', $config_file_contents_str );
             $this->addToView('_POST', $_POST);

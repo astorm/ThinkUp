@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -82,8 +82,8 @@ class TestOfInstallerMySQLDAO extends ThinkUpUnitTestCase {
         $config_array = $config->getValuesArray();
         $dao = new InstallerMySQLDAO($config_array);
         $result = $dao->getTables();
-        $this->assertEqual(sizeof($result), 30);
-        $this->assertEqual($result[0], $config_array["table_prefix"].'encoded_locations');
+        $this->assertEqual(sizeof($result), 31);
+        $this->assertEqual($result[0], $config_array["table_prefix"].'count_history');
     }
     public function testCheckTable() {
         $config = Config::getInstance();
@@ -126,7 +126,10 @@ class TestOfInstallerMySQLDAO extends ThinkUpUnitTestCase {
 
     public function testExamineQueries() {
         // test on fully installed tables
-        $install_queries = file_get_contents(THINKUP_ROOT_PATH."webapp/install/sql/build-db_mysql.sql");
+        $install_queries = file_get_contents(THINKUP_ROOT_PATH.
+        "webapp/install/sql/build-db_mysql-upcoming-release.sql");
+
+        $this->debug(Utils::varDumpToString($install_queries));
 
         //clean SQL: diffDataStructure requires two spaces after PRIMARY KEY, and a space between key name and (field)
         $install_queries = str_replace('PRIMARY KEY (', 'PRIMARY KEY  (', $install_queries);
@@ -142,6 +145,7 @@ class TestOfInstallerMySQLDAO extends ThinkUpUnitTestCase {
 
         $this->assertEqual(sizeof($output['for_update']), 0 );
         //var_dump($output);
+        //$this->debug(Utils::varDumpToString($output));
         $expected = "/INSERT INTO ".$config_array["table_prefix"]."options/i";
         $this->assertPattern( $expected, $output['queries'][0] );
 

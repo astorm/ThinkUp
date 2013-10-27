@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -85,21 +85,21 @@ class TestOfBackupController extends ThinkUpUnitTestCase {
         $this->simulateLogin('me@example.com', true);
         $controller = new BackupController(true);
         $results = $controller->control();
-        $this->assertPattern('/setup does not support a library/', $results);
+        $this->assertPattern('/setup does not support/', $results);
     }
 
     public function testLoadBackupView() {
         $this->simulateLogin('me@example.com', true);
         $controller = new BackupController(true);
         $results = $controller->control();
-        $this->assertPattern('/Back Up Your ThinkUp Data/', $results);
+        $this->assertPattern('/Back up ThinkUp\'s entire database/', $results);
     }
 
     public function testLoadBackupViewCLIWarn() {
         $this->simulateLogin('me@example.com', true);
         $controller = new BackupController(true);
         $results = $controller->control();
-        $this->assertPattern('/Back Up Your ThinkUp Data/', $results);
+        $this->assertPattern('/Back up ThinkUp\'s entire database/', $results);
         $v_mgr = $controller->getViewManager();
         $this->assertNull($v_mgr->getTemplateDataItem('high_table_row_count') ) ;
 

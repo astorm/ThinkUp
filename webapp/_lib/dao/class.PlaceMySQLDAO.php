@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -62,7 +62,7 @@ class PlaceMySQLDAO extends PDODAO implements PlaceDAO {
                 ':network' => $network,
                 ':bounding_box' => $polystr
             );
-            if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+            if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
             $ps = $this->execute($q, $vars);
             $res = $this->getUpdateCount($ps);
@@ -83,7 +83,7 @@ class PlaceMySQLDAO extends PDODAO implements PlaceDAO {
                 ':point' => $pcstr,
                 ':network' => $network
             );
-            if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+            if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
             $ps = $this->execute($q, $vars);
             $res2 = $this->getUpdateCount($ps);
@@ -111,7 +111,7 @@ class PlaceMySQLDAO extends PDODAO implements PlaceDAO {
             ':icon' => isset($place['icon']) ? $place['icon'] : null,
             ':map_image' => isset($place['map_image']) ? $place['map_image'] : null
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
         $ps = $this->execute($q, $vars);
         $res = $this->getUpdateCount($ps);
@@ -122,7 +122,7 @@ class PlaceMySQLDAO extends PDODAO implements PlaceDAO {
         $q = "SELECT id, place_id, place_type, name, full_name, country_code, country, network, icon, map_image, ";
         $q .= "AsText(longlat) AS longlat, AsText(bounding_box) AS bounding_box FROM #prefix#places ";
         $q .= "WHERE place_id = :place_id";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
         $ps = $this->execute($q, array( ':place_id' => $place_id));
         $row = $this->getDataRowAsArray($ps);
@@ -137,7 +137,7 @@ class PlaceMySQLDAO extends PDODAO implements PlaceDAO {
         $q = "SELECT id, AsText(longlat) AS longlat, post_id, place_id, network FROM #prefix#places_posts " .
         "WHERE post_id = :post_id AND network = :network";
 
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
         $ps = $this->execute($q, array(
             ':post_id' => (string)$post_id,

@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -47,7 +47,7 @@ class ShortLinkMySQLDAO extends PDODAO {
         $q .= "GROUP BY sl.short_url ";
         $vars = array( ':short_url'=>$url."%" );
 
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsObjects($ps, 'ShortLink');
@@ -60,7 +60,7 @@ class ShortLinkMySQLDAO extends PDODAO {
             ':click_count'=>(int)$click_count,
             ':short_url'=>$short_url
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getUpdateCount($ps);
@@ -80,7 +80,7 @@ class ShortLinkMySQLDAO extends PDODAO {
             ':limit'=>(int)$limit
         );
 
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsArrays($ps);
@@ -103,7 +103,7 @@ class ShortLinkMySQLDAO extends PDODAO {
             ':last_x_days'=>(int)$last_x_days,
             ':since'=>$since
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowsAsArrays($ps);
         return (sizeof($result) > 0 );
@@ -125,7 +125,7 @@ class ShortLinkMySQLDAO extends PDODAO {
             ':last_x_days'=>(int)$last_x_days,
             ':since'=>$since
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowsAsArrays($ps);
         return $result[0]["average_click_count"];
@@ -148,7 +148,7 @@ class ShortLinkMySQLDAO extends PDODAO {
             ':last_x_days'=>(int)$last_x_days,
             ':since'=>$since
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowsAsArrays($ps);
         return $result[0]["highest_click_count"];
@@ -162,9 +162,13 @@ class ShortLinkMySQLDAO extends PDODAO {
         $vars = array(
             ':link_id'=>$link_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowsAsArrays($ps);
-        return $result[0]["click_count"];
+        if (isset($result[0]["click_count"])) {
+            return $result[0]["click_count"];
+        } else {
+            return 0;
+        }
     }
 }

@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -43,12 +43,12 @@ $plugin_tests->add(new TestOfGeoEncoderPlugin());
 $plugin_tests->add(new TestOfGeoEncoderPluginConfigurationController());
 $plugin_tests->add(new TestOfMapController());
 $plugin_tests->add(new TestOfTwitterAPIAccessorOAuth());
-$plugin_tests->add(new TestOfTwitterAuthController());
+$plugin_tests->add(new TestOfTwitterAPIEndpoint());
 $plugin_tests->add(new TestOfTwitterCrawler());
 $plugin_tests->add(new TestOfTwitterInstanceMySQLDAO());
-$plugin_tests->add(new TestOfTwitterOAuth());
 $plugin_tests->add(new TestOfTwitterPlugin());
 $plugin_tests->add(new TestOfTwitterPluginConfigurationController());
+$plugin_tests->add(new TestOfTwitterPluginHashtagConfigurationController());
 $plugin_tests->add(new TestOfCrawlerTwitterAPIAccessorOAuth());
 $plugin_tests->add(new TestOfRetweetDetector());
 $plugin_tests->add(new TestOfHelloThinkUpPluginConfigurationController());
@@ -67,6 +67,10 @@ $plugin_tests->add(new TestOfGooglePlusPluginConfigurationController());
 $plugin_tests->add(new TestOfFoursquarePlugin());
 $plugin_tests->add(new TestOfFoursquareCrawler());
 $plugin_tests->add(new TestOfFoursquarePluginConfigurationController());
+$plugin_tests->add(new TestOfYouTubeCrawler());
+$plugin_tests->add(new TestOfYouTubePlugin());
+$plugin_tests->add(new TestOfYouTubePluginConfigurationController());
+$plugin_tests->add(new TestOfInsightPluginParent());
 //Insights
 $plugin_tests->add(new TestOfArchivedPostsInsight());
 $plugin_tests->add(new TestOfAllAboutYouInsight());
@@ -74,8 +78,19 @@ $plugin_tests->add(new TestOfBigReshareInsight());
 $plugin_tests->add(new TestOfClickSpikeInsight());
 $plugin_tests->add(new TestOfFrequencyInsight());
 $plugin_tests->add(new TestOfListMembershipInsight());
-$plugin_tests->add(new TestOfMapInsight());
+$plugin_tests->add(new TestOfSavedSearchResultsInsight());
 $plugin_tests->add(new TestOfStyleStatsInsight());
+$plugin_tests->add(new TestOfMetweetInsight());
+$plugin_tests->add(new TestOfInteractionsInsight());
+$plugin_tests->add(new TestOfWeeklyBestsInsight());
+$plugin_tests->add(new TestOfReplySpikeInsight());
+$plugin_tests->add(new TestOfResponseTimeInsight());
+$plugin_tests->add(new TestOfFavoritedLinksInsight());
+$plugin_tests->add(new TestOfLongLostContactsInsight());
+$plugin_tests->add(new TestOfLinkPromptInsight());
+$plugin_tests->add(new TestOfLocalFollowersInsight());
+$plugin_tests->add(new TestOfOutreachPunchcardInsight());
+$plugin_tests->add(new TestOfSplitOpinionsInsight());
 $version = explode('.', PHP_VERSION); //dont run redis test for php less than 5.3
 if ($version[0] >= 5 && $version[1] >= 3) { //only run Redis tests if PHP 5.3
     $plugin_tests->add(new TestOfStreamMessageQueueRedis());

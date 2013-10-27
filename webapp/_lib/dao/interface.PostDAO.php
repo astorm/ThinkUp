@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -621,6 +621,26 @@ interface PostDAO {
     public function getAverageRetweetCount($username, $network, $last_x_days, $since=null);
 
     /**
+     * Get the average fave count over the last X days
+     * @param $username
+     * @param $network
+     * @param $last_x_days
+     * @param $since Date to calculate from defaults to today
+     * @return int Average retweet count over the last X days
+     */
+    public function getAverageFaveCount($username, $network, $last_x_days, $since=null);
+
+    /**
+     * Get the average reply count over the last X days
+     * @param $username
+     * @param $network
+     * @param $last_x_days
+     * @param $since Date to calculate from defaults to today
+     * @return int Average reply count over the last X days
+     */
+    public function getAverageReplyCount($username, $network, $last_x_days, $since=null);
+
+    /**
      * Get posts from this day in every year except this one that aren't replies or reshares/retweets.
      * @param str $author_id
      * @param str $network
@@ -682,6 +702,24 @@ interface PostDAO {
      */
     public function doesUserHavePostsWithRetweetsSinceDate($author_username, $network, $last_x_days, $since=null);
 
+    /** Check if user has any posts with faves on or before since_date minus last_x_days
+     * @param str $author_username
+     * @param str $network
+     * @param int $last_x_days
+     * @param str $since Date in Y-m-d format
+     * @return bool
+     */
+    public function doesUserHavePostsWithFavesSinceDate($author_username, $network, $last_x_days, $since=null);
+
+    /** Check if user has any posts with replies on or before since_date minus last_x_days
+     * @param str $author_username
+     * @param str $network
+     * @param int $last_x_days
+     * @param str $since Date in Y-m-d format
+     * @return bool
+     */
+    public function doesUserHavePostsWithRepliesSinceDate($author_username, $network, $last_x_days, $since=null);
+
     /**
      * Get users who have have retweeted a specified post and have a higher follower count than a given threshold.
      * @param unknown_type $post_id
@@ -690,6 +728,24 @@ interface PostDAO {
      * @return array User
      */
     public function getRetweetsByAuthorsOverFollowerCount($post_id, $network, $follower_count_threshold);
+
+    /**
+     * Get the number of days since a user last replied to a specified recipient.
+     * @param int $user_id
+     * @param int $recipient_id
+     * @param str $network
+     * @return int
+     */
+    public function getDaysAgoSinceUserRepliedToRecipient($user_id, $recipient_id, $network);
+
+    /**
+     * Get the total number of posts by a user.
+     * @param int $author_id
+     * @param str $network
+     * @param int $days_ago
+     * @return int posts count
+     */
+    public function countAllPostsByUserSinceDaysAgo($author_id, $network, $days_ago=7);
 
     /**
      * Search a service users's posts.
@@ -701,4 +757,36 @@ interface PostDAO {
      * @return arr of Post objects
      */
     public function searchPostsByUser(array $keywords, $network, $author_username, $page_number=1, $page_count=20);
+
+    /**
+     * Get all posts by a given hashtag with configurable order by field and direction
+     * @param int $hashtag_id
+     * @param str $network
+     * @param int $count
+     * @param str $order_by field name
+     * @param str $direction either "DESC" or "ASC
+     * @param int $page Page number, defaults to 1
+     * @param bool $is_public Whether or not these results are going to be displayed publicly. Defaults to false.
+     * @return array Posts with link object set
+     */
+    public function getAllPostsByHashtagId($hashtag_id, $network, $count, $order_by="pub_date", $direction="DESC",
+    $page=1, $is_public = false);
+
+    /**
+     * Delete Posts given a hashtag_id
+     * @param str $hashtag_id
+     * @return  int Total number of affected rows
+     */
+    public function deletePostsByHashtagId($hashtag_id);
+
+    /**
+     * Search a service users's tweet search.
+     * @param arr $keywords
+     * @param Hashtag $hashtag
+     * @param str $network
+     * @param int $page_number defaults to 1
+     * @param int $page_count defaults to 20
+     * @return arr of Post objects
+     */
+    public function searchPostsByHashtag($keywords, Hashtag $hashtag, $network, $page_number=1, $page_count=20);
 }

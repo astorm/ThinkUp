@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -29,8 +29,8 @@
  *
  * Database migration assertions to test during WebTestOfUpgradeDatabase
  */
-$LATEST_VERSION = '2.0-beta.2';
-$TOTAL_MIGRATION_COUNT = 243;
+$LATEST_VERSION = '2.0-beta.8';
+$TOTAL_MIGRATION_COUNT = 252;
 
 $MIGRATIONS = array(
     /* beta 0.1 */
@@ -965,8 +965,89 @@ $MIGRATIONS = array(
 
      /* 2.0-beta.2 */
     '2.0-beta.2' => array(
-        'zip_url' => 'file://./build/thinkup.zip',
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.2.zip',
         'migrations' => 0,
      ),
+
+     /* 2.0-beta.3 */
+    '2.0-beta.3' => array(
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.3.zip',
+        'migrations' => 3,
+        'setup_sql' => array("INSERT INTO tu_options (option_id, option_name, option_value) " .
+                            "VALUES (2345, 'favs_older_pages', 'test_plugin_value');".
+                            "INSERT INTO tu_options (option_id, option_name, option_value) " .
+                            "VALUES (2346, 'favs_cleanup_pages', 'test_plugin_value');"
+                            ),
+        'migration_assertions' => array(
+            'sql' => array(
+                array(
+                    'query' => "DESCRIBE tu_instances_twitter last_unfav_page_checked", // field dropped
+                    'no_match' => true,
+                ),
+                array(
+                    'query' => "DESCRIBE tu_instances_twitter last_page_fetched_favorites", // field dropped
+                    'no_match' => true,
+                ),
+                array(
+                    // Options no longer exist
+                    'query' => "SELECT * FROM tu_options WHERE option_name='favs_older_pages' OR ".
+                    "option_name='favs_cleanup_pages';",
+                    'no_match' => true,
+                ),
+             )
+        )
+     ),
+
+     /* 2.0-beta.4 */
+    '2.0-beta.4' => array(
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.4.zip',
+        'migrations' => 0,
+     ),
+
+     /* 2.0-beta.5 */
+    '2.0-beta.5' => array(
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.4.zip',
+        'migrations' => 0,
+     ),
+
+     /* 2.0-beta.6 */
+    '2.0-beta.6' => array(
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.6.zip',
+        'migrations' => 0,
+     ),
+
+     /* 2.0-beta.7 */
+    '2.0-beta.7' => array(
+        'zip_url' => 'https://thinkup.com/downloads/beta/thinkup-2.0-beta.7.zip',
+        'migrations' => 0,
+        'migration_assertions' => array(
+            'sql' => array(
+                array(
+                    // Created tu_instances_hashtags table
+                    'query' => 'DESCRIBE tu_instances_hashtags id;',
+                    'match' => "/int\(20\)/",
+                    'column' => 'Type',
+                ),
+                array(
+                    // Added time_generated field
+                    'query' => 'DESCRIBE tu_insights time_generated;',
+                    'match' => "/datetime/",
+                    'column' => 'Type',
+                ),
+                array(
+                    // Added time_generated field
+                    'query' => 'DESCRIBE tu_insights time_updated;',
+                    'match' => "/timestamp/",
+                    'column' => 'Type',
+                ),
+             )
+        )
+     ),
+
+     /* 2.0-beta.8 */
+    '2.0-beta.8' => array(
+        'zip_url' => 'file://./build/thinkup.zip',
+        'migrations' => 0,
+     )
 
 );

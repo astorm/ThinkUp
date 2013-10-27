@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -36,7 +36,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':date'=>$date,
             ':instance_id'=>$instance_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, 'Insight');
     }
@@ -53,7 +53,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':network_username'=>$network_username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $row = $this->getDataRowAsArray($ps);
         if (isset($row)) {
@@ -76,7 +76,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':slug'=>$slug,
             ':instance_id'=>$instance_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getDataRowsAsArrays($ps);
         return (sizeof($result) > 0);
@@ -96,7 +96,8 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
         $insight = self::getInsight($slug, $instance_id, $date);
         if ($insight == null) {
             $q = "INSERT INTO #prefix#insights SET slug=:slug, date=:date, instance_id=:instance_id, ";
-            $q .= "prefix=:prefix, text=:text, filename=:filename, emphasis=:emphasis, related_data=:related_data";
+            $q .= "prefix=:prefix, text=:text, filename=:filename, emphasis=:emphasis, related_data=:related_data, ";
+            $q .= "time_generated='".date("Y-m-d H:i:s")."'";
             $vars = array(
             ':slug'=>$slug,
             ':date'=>$date,
@@ -107,7 +108,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':emphasis'=>$emphasis,
             ':related_data'=>$related_data
             );
-            if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+            if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
             $ps = $this->execute($q, $vars);
             $result = $this->getUpdateCount($ps);
             return ($result > 0);
@@ -125,7 +126,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ":start_on_record"=>(int)$start_on_record,
             ":limit"=>(int)$page_count
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $insights = $this->getDataRowsAsObjects($ps, "Insight");
         foreach ($insights as $insight) {
@@ -144,7 +145,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':date'=>$date,
             ':instance_id'=>$instance_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getUpdateCount($ps);
         return ($result > 0);
@@ -163,7 +164,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':related_data'=>$related_data,
             ':emphasis'=>$emphasis
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $result = $this->getUpdateCount($ps);
         return ($result > 0);
@@ -176,7 +177,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ':slug'=>$slug,
             ':instance_id'=>$instance_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
         $ps = $this->execute($q, $vars);
         $result = $this->getUpdateCount($ps);
@@ -204,7 +205,7 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             ":limit"=>(int)$page_count,
             ":owner_id"=>(int)$owner_id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $rows = $this->getDataRowsAsArrays($ps);
         $insights = array();
@@ -231,12 +232,13 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
         if ($public_only) {
             $q .= "AND su.is_public = 1 ";
         }
-        $q .= " AND i.text != '' ORDER BY date DESC, emphasis DESC, i.id DESC LIMIT :start_on_record, :limit;";
+        $q .= "AND i.text != '' ORDER BY date DESC, emphasis DESC, filename, i.id DESC ";
+        $q .= "LIMIT :start_on_record, :limit;";
         $vars = array(
             ":start_on_record"=>(int)$start_on_record,
             ":limit"=>(int)$page_count
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $rows = $this->getDataRowsAsArrays($ps);
         $insights = array();
@@ -250,6 +252,30 @@ class InsightMySQLDAO  extends PDODAO implements InsightDAO {
             $insight->related_data = unserialize($insight->related_data);
             //assume insight came at same time of day as now for relative day notation
             $insight->date = $insight->date. " ".date('H').":".date('i');
+        }
+        return $insights;
+    }
+
+    public function getAllOwnerInstanceInsightsSince($owner_id, $since) {
+        $q = "SELECT i.*, i.id as insight_key, su.*, u.avatar FROM #prefix#insights i ";
+        $q .= "INNER JOIN #prefix#instances su ON i.instance_id = su.id ";
+        $q .= "INNER JOIN #prefix#owner_instances oi ON su.id = oi.instance_id ";
+        $q .= "LEFT JOIN #prefix#users u ON (su.network_user_id = u.user_id AND su.network = u.network) ";
+        $q .= "WHERE su.is_active = 1 AND oi.owner_id = :owner_id AND time_generated > :since ";
+        $q .= "AND i.text != '' ORDER BY date DESC, emphasis DESC, i.id;";
+        $vars = array(
+            ":owner_id"=>(int)$owner_id,
+            ':since'=>$since
+        );
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        $rows = $this->getDataRowsAsArrays($ps);
+        $insights = array();
+        foreach ($rows as $row) {
+            $insight = new Insight($row);
+            $insight->instance = new Instance($row);
+            $insight->instance->avatar = $row['avatar'];
+            $insights[] = $insight;
         }
         return $insights;
     }

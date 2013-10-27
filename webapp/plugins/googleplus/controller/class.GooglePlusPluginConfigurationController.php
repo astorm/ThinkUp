@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -189,9 +189,9 @@ class GooglePlusPluginConfigurationController extends PluginConfigurationControl
 
         if (!$user_dao->isUserInDB($gplus_user_id, 'google+')) {
             $r = array('user_id'=>$gplus_user_id, 'user_name'=>$gplus_username,'full_name'=>$gplus_username,
-            'avatar'=>'', 'location'=>'', 'description'=>'', 'url'=>'', 'is_protected'=>'',  'follower_count'=>0,
-            'friend_count'=>0, 'post_count'=>0, 'last_updated'=>'', 'last_post'=>'', 'joined'=>'',
-            'last_post_id'=>'', 'network'=>'facebook' );
+            'avatar'=>'', 'location'=>'', 'description'=>'', 'url'=>'', 'is_verified'=>'', 'is_protected'=>'',
+            'follower_count'=>0, 'friend_count'=>0, 'post_count'=>0, 'last_updated'=>'', 'last_post'=>'',
+            'joined'=>'0000-00-00 00:00:00', 'last_post_id'=>'', 'network'=>'google+' );
             $u = new User($r, 'Owner info');
             $user_dao->updateUser($u);
         }

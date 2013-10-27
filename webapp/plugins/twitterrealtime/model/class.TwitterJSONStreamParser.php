@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -156,6 +156,7 @@ class TwitterJSONStreamParser {
         $user_array['full_name'] = $user['name'];
         $user_array['avatar'] = $user['profile_image_url'];
         $user_array['follower_count'] = $user['followers_count'];
+        $user_array['is_verified'] = $user['verified'];
         $user_array['is_protected'] = $user['protected'];
         $user_array['location'] = $user['location'];
         $user_array['description'] = $user['description'];

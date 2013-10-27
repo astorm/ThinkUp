@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -32,13 +32,18 @@ require_once THINKUP_WEBAPP_PATH.'_lib/extlib/simpletest/autorun.php';
 require_once THINKUP_WEBAPP_PATH.'_lib/extlib/simpletest/web_tester.php';
 
 require_once THINKUP_ROOT_PATH.'tests/classes/class.ThinkUpUnitTestCase.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterCrawler.php';
 require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterPlugin.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterInstanceMySQLDAO.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterInstance.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterAPIEndpoint.php';
 require_once THINKUP_WEBAPP_PATH.'plugins/twitterrealtime/model/class.TwitterRealtimePlugin.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterOAuthThinkUp.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.TwitterAPIAccessorOAuth.php';
+require_once THINKUP_WEBAPP_PATH.'plugins/twitter/model/class.CrawlerTwitterAPIAccessorOAuth.php';
 
 class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
     var $logger;
-    var $webapp_plugin_registrar;
-    var $crawler_plugin_registrar;
 
     public function setUp() {
         parent::setUp();
@@ -56,6 +61,7 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
     }
 
     public function testConstructor() {
+        $this->debug(__METHOD__);
         $plugin = new TwitterPlugin();
         $this->assertNotNull($plugin);
         $this->assertIsA($plugin, 'TwitterPlugin');
@@ -64,6 +70,7 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
     }
 
     public function testMenuItemRegistrationForDashboardAndPost() {
+        $this->debug(__METHOD__);
         $pd = DAOFactory::getDAO('PostDAO');
         $instance = new Instance();
         $instance->network_user_id = 1;
@@ -125,6 +132,7 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
 
     // this version checks the menus with the twitter realtime plugin active
     public function testMenuItemRegistrationForDashboardAndPostRealtimeActive() {
+        $this->debug(__METHOD__);
         // define an active twitter realtime plugin
         $builders = array();
         $builders[] = FixtureBuilder::build('plugins', array('name'=>'Twitter Realtime',
@@ -199,6 +207,7 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
     }
 
     public function testRepliesOrdering() {
+        $this->debug(__METHOD__);
         $this->assertEqual(TwitterPlugin::repliesOrdering('default'), 'is_reply_by_friend DESC, follower_count DESC');
         $this->assertEqual(TwitterPlugin::repliesOrdering('location'),
         'geo_status, reply_retweet_distance, is_reply_by_friend DESC, follower_count DESC');
@@ -206,9 +215,8 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
     }
 
     public function testDeactivate() {
+        $this->debug(__METHOD__);
         //all facebook and facebook page accounts should be set to inactive on plugin deactivation
-        $webapp_plugin_registrar = PluginRegistrarWebapp::getInstance();
-        $logger = Logger::getInstance();
         $pd = DAOFactory::getDAO('PostDAO');
         $instance = new Instance();
         $instance->network_user_id = 1;
@@ -230,37 +238,35 @@ class TestOfTwitterPlugin extends ThinkUpUnitTestCase {
         $this->assertEqual(sizeof($active_instances), 0);
     }
 
-    public function testBudgetCrawlLimits() {
-        // set all our bedget percentages to 10% for testing
+    public function testCrawlCompletion() {
+        $this->debug(__METHOD__);
+        $builders = array();
+
+        //Add instances
+        $instance_builder_1 = FixtureBuilder::build('instances', array('id'=>1, 'network_username'=>'julie',
+        'network'=>'twitter', 'crawler_last_run'=>'-5d', 'is_activated'=>'1', 'is_public'=>'1'));
+        $instance_builder_2 = FixtureBuilder::build('instances', array('id'=>2, 'network_username'=>'john',
+        'network'=>'twitter', 'crawler_last_run'=>'-5d', 'is_activated'=>'1', 'is_public'=>'1'));
+        $builders[] = FixtureBuilder::build('instances_twitter', array('id'=>1));
+        $builders[] = FixtureBuilder::build('instances_twitter', array('id'=>2));
+        //Add owner
+        $builders[] = FixtureBuilder::build('owners', array('id'=>1, 'full_name'=>'ThinkUp J. User',
+        'email'=>'me@example.com', 'is_activated'=>1, 'is_admin'=>1));
+        $builders[] = FixtureBuilder::build('owner_instances', array('owner_id'=>1, 'instance_id'=>1,
+        'auth_error'=>''));
+        $builders[] = FixtureBuilder::build('owner_instances', array('owner_id'=>1, 'instance_id'=>2,
+        'auth_error'=>''));
+
+        $this->simulateLogin('me@example.com', true, true);
+
+        $test = new TwitterInstanceMySQLDAO();
         $twitter_plugin = new TwitterPlugin();
-        $auth_budget_config = $twitter_plugin->api_budget_allocation_auth;
-        foreach($auth_budget_config as $function_name => $value) {
-            $auth_budget_config[$function_name]['percent'] = 10;
-        }
-        $twitter_plugin->api_budget_allocation_auth = $auth_budget_config;
+        $twitter_plugin->crawl();
 
-        $noauth_budget_config = $twitter_plugin->api_budget_allocation_noauth;
-        foreach($noauth_budget_config as $function_name => $value) {
-            $noauth_budget_config[$function_name]['percent'] = 10;
-        }
-        $twitter_plugin->api_budget_allocation_noauth = $noauth_budget_config;
-
-        // with auth
-        $limits = $twitter_plugin->budgetCrawlLimits(1000, false);
-        $this->assertIsA($limits, 'Array');
-        $this->assertEqual(count($limits), 14);
-        foreach($limits as $limit_key => $value) {
-            $this->assertEqual($value['count'], 100);
-            $this->assertEqual($value['remaining'], 100);
-        }
-
-        // no auth
-        $limits = $twitter_plugin->budgetCrawlLimits(1000, true);
-        $this->assertIsA($limits, 'Array');
-        $this->assertEqual(count($limits), 6);
-        foreach($limits as $limit_key => $value) {
-            $this->assertEqual($value['count'], 100);
-            $this->assertEqual($value['remaining'], 100);
-        }
+        $instance_dao = new InstanceMySQLDAO();
+        $updated_instance = $instance_dao->get(1);
+        $this->debug(Utils::varDumpToString($updated_instance));
+        // crawler_last_run should have been updated
+        $this->assertNotEqual($instance_builder_1->columns['crawler_last_run'],$updated_instance->crawler_last_run );
     }
 }

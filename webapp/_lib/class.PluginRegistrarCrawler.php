@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -108,6 +108,9 @@ class PluginRegistrarCrawler extends PluginRegistrar {
         if ($lock_successful) {
             $this->emitObjectFunction('crawl');
             $mutex_dao->releaseMutex($mutex_name);
+            //clear cache so that insight stream updates
+            $v_mgr = new ViewManager();
+            $v_mgr->clear_all_cache();
         } else {
             throw new CrawlerLockedException("Error starting crawler; another crawl is already in progress.");
         }
@@ -116,8 +119,17 @@ class PluginRegistrarCrawler extends PluginRegistrar {
      * Register crawler plugin.
      * @param str $object_name Name of Crawler plugin object which instantiates the Crawler interface, like
      * "TwitterPlugin"
+     * @param boolean $run_before_insight_generator true if this plugin should run before the insight generator plugin
      */
-    public function registerCrawlerPlugin($object_name) {
-        $this->registerObjectFunction('crawl', $object_name, 'crawl');
+    public function registerCrawlerPlugin($object_name, $run_before_insight_generator=true) {
+        $this->registerObjectFunction('crawl', $object_name, 'crawl', $run_before_insight_generator);
+    }
+
+    /**
+     * FOR TESTING PURPOSES ONLY
+     * @returns array of function callbacks
+     */
+    public function getObjectFunctionCallbacks() {
+        return $this->object_function_callbacks;
     }
 }

@@ -251,4 +251,7 @@ class stackexchangePlugin extends Plugin implements CrawlerPlugin, DashboardPlug
     public function getPostDetailMenuItems($post) {
     
     }
+    public function renderInstanceConfiguration($owner, $instance_username, $instance_network) {
+        return '';
+    }
 }

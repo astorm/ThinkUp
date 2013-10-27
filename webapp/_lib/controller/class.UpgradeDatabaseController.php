@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -30,7 +30,7 @@
  * Upgrade Controller
  *
  * Checks the current app version with a DB version option stored in the db. If that version option
- * does not exists, or it is older than the current version, we flag the app as in need of migration
+ * does not exist, or it is older than the current version, we flag the app as in need of migration
  * in the root ThinkUp controller, and notify web users that the app is in an upgrade state.
  *
  * If the user who loads the site update message page is not logged in, we generate an upgrade token file,
@@ -244,7 +244,12 @@ class UpgradeDatabaseController extends ThinkUpAuthController {
         $dir = THINKUP_WEBAPP_PATH . self::MIGRATION_DIR;
         $config = Config::getInstance();
         $table_prefix = $config->getValue('table_prefix');
-        $dir_list = glob('{' . $dir . '/*.sql,' . $dir . '/*.migration}', GLOB_BRACE);
+        // Next line doesn't work on Travis-CI
+        //        $dir_list = glob('{' . $dir . '/*.sql,' . $dir . '/*.migration}', GLOB_BRACE);
+        $dir_list_1 = glob($dir . '/*.sql', GLOB_BRACE);
+        $dir_list_2 = glob($dir . '/*.migration', GLOB_BRACE);
+        $dir_list = array_merge($dir_list_1, $dir_list_2);
+
         $migrations = array();
         for ($i = 0; $i < count($dir_list); $i++) {
             if (preg_match('/_v(\d+\.\d+(\.\d+)?(\w+)?)\.sql(\.migration)?/', $dir_list[$i], $matches)
@@ -285,20 +290,26 @@ class UpgradeDatabaseController extends ThinkUpAuthController {
         }
         // add non-versioned sql if running via command line and no version arg '--with-new-sql'
         if ($no_version) {
-            foreach($dir_list as $file) {
+            foreach ($dir_list as $file) {
                 if (!preg_match('/_v(\d+\.\d+(\.\d+)?(\w+)?)\.sql(\.migration)?/', $file)
-                && preg_match("/\.sql$/", $file)
-                ) {
-                    $migration_string = file_get_contents($file);
-                    // check for modified prefix
-                    if ($table_prefix != 'tu_') {
-                        $migration_string = str_replace('tu_', $table_prefix, $migration_string);
-                    }
-                    $path_info = pathinfo($file);
-                    $migration =
-                    array("version" =>  $migration_version, 'sql'  => $migration_string, 'new_migration' => false,
+                && preg_match("/\.sql$/", $file) ) {
+
+                    //No version in filename
+                    if (!preg_match('/_v(\d+\.\d+(\.\d+)?(\w+)?)\.sql(\.migration)?/', $file, $matches)
+                    //TODO combine these into a single regex
+                    && !preg_match('/_v(\d+\.\d+(-beta\.\d+)?(\w+)?)\.sql(\.migration)?/', $file, $matches)) {
+                        $migration_string = file_get_contents($file);
+
+                        // check for modified prefix
+                        if ($table_prefix != 'tu_') {
+                            $migration_string = str_replace('tu_', $table_prefix, $migration_string);
+                        }
+                        $path_info = pathinfo($file);
+                        $migration =
+                        array("version" =>  $migration_version, 'sql'  => $migration_string, 'new_migration' => false,
                         'filename' => $path_info['basename'], 'new_migration' => true);
-                    array_push($migrations, $migration);
+                        array_push($migrations, $migration);
+                    }
                 }
             }
         }

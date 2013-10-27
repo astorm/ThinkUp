@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -103,7 +103,7 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
         $this->clickLinkById('nextstep');
 
         //sleep(1000);
-        $this->assertText('Create Your ThinkUp Account');
+        $this->assertText('Create your ThinkUp account');
         $this->setField('full_name', 'ThinkUp J. User');
         $this->setField('site_email', 'user@example.com');
         $this->setField('password', 'secret12345');
@@ -141,6 +141,13 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
         $activation_code);
         $this->assertNoText('Houston, we have a problem: Account activation failed.');
         $this->assertText('Success! Your account has been activated. Please log in.');
+
+        //Try to activate again
+        $this->get($this->url.'/test_installer/thinkup/session/activate.php?usr=user@example.com&code='.
+        $activation_code);
+        $this->assertNoText('Houston, we have a problem: Account activation failed.');
+        $this->assertNoText('Success! Your account has been activated. Please log in.');
+        $this->assertText('You have already activated your account. Please log in.');
 
         //Log into ThinkUp
         $this->clickLink('Log in');
@@ -183,7 +190,7 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
         $this->clickLinkById('nextstep');
 
         //sleep(1000);
-        $this->assertText('Create Your ThinkUp Account');
+        $this->assertText('Create your ThinkUp account');
         $this->setField('full_name', 'ThinkUp J. User');
         $this->setField('site_email', 'user@example.com');
         $this->setField('password', 'secret12345');
@@ -200,8 +207,7 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
 
         $this->assertNoText('ThinkUp has been installed successfully. Check your email account; an account activation '.
         'message has been sent.');
-        $this->assertText("ThinkUp couldn't write the config.inc.php file.Use root (or sudo) to create the file ".
-        "manually, and allow PHP to write to it, by executing the following commands:");
+        $this->assertText("Use root (or sudo) to create the file manually, and allow PHP to write to it, by executing the");
 
         //Config file has not been written
         $this->assertTrue(!file_exists($THINKUP_CFG['source_root_path'].
@@ -233,13 +239,13 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
         //Start installation process
         $this->get($this->url.'/test_installer/mythinkupfolder/');
         $this->assertTitle("ThinkUp");
-        $this->assertText('ThinkUp\'s configuration file does not exist! Try installing ThinkUp.');
+        $this->assertText('ThinkUp\'s configuration file does not exist!');
         $this->clickLink("installing ThinkUp.");
-        $this->assertText('Great! Your system has everything it needs to run ThinkUp.');
+        $this->assertText('Your system has everything it needs to run ThinkUp.');
         $this->clickLinkById('nextstep');
 
         //sleep(1000);
-        $this->assertText('Create Your ThinkUp Account');
+        $this->assertText('Create your ThinkUp account');
         $this->setField('full_name', 'ThinkUp J. User');
         $this->setField('site_email', 'user@example.com');
         $this->setField('password', 'secret12345');
@@ -256,8 +262,7 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
 
         //$this->showSource();
         //sleep(1000);
-        $this->assertText('ThinkUp has been installed successfully. Check your email account; an account activation '.
-        'message has been sent.');
+        $this->assertText('ThinkUp has been installed successfully. Check your email account;');
 
         //Config file has been written
         $this->assertTrue(file_exists($THINKUP_CFG['source_root_path'].
@@ -280,7 +285,7 @@ class WebTestOfInstallation extends ThinkUpBasicWebTestCase {
         $this->assertText('Great! Your system has everything it needs to run ThinkUp.');
         $this->clickLinkById('nextstep');
 
-        $this->assertText('Create Your ThinkUp Account');
+        $this->assertText('Create your ThinkUp account');
         $this->setField('full_name', '');
         $this->setField('site_email', 'notavalidemailaddress');
         $this->setField('password', 'secdddddd');

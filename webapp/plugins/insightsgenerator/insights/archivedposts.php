@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Archived Posts
- Description: Notify user every 100 posts captured.
+ Description: How many posts of yours which have been captured.
  */
 
 /**
@@ -12,7 +12,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -46,19 +46,8 @@ class ArchivedPostsInsight extends InsightPluginParent implements InsightPlugin 
 
                 $config = Config::getInstance();
 
-                switch ($instance->network) {
-                    case "twitter":
-                        $posts_term = "tweets";
-                        break;
-                    case "foursquare":
-                        $posts_term = "checkins";
-                        break;
-                    default:
-                        $posts_term = "posts";
-                }
-
-                $text = "ThinkUp has captured over <strong>".
-                (number_format($archived_posts_in_hundreds * 100)).' '. $posts_term . '</strong>.';
+                $text = "ThinkUp has captured over <strong>". (number_format($archived_posts_in_hundreds * 100)).
+                ' '.$this->terms->getNoun('post', InsightTerms::PLURAL). '</strong> by '.$this->username.'.';
                 $this->insight_dao->insertInsight("archived_posts", $instance->id, $this->insight_date, "Archived:",
                 $text, basename(__FILE__, ".php"), Insight::EMPHASIS_MED);
             }

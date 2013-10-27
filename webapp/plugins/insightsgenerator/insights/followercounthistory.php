@@ -1,7 +1,8 @@
 <?php
 /*
  Plugin Name: Follower Count
- Description: Upcoming follower count milestones (chart). (1st of the month)
+ Description: Upcoming follower count milestones (chart).
+ When: 1st of the month
  */
 
 /**
@@ -12,7 +13,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -43,9 +44,9 @@ class FollowerCountInsight extends InsightPluginParent implements InsightPlugin 
         $insight_day_of_month = (int) $insight_date->format('j');
 
         if ($insight_day_of_month == 1) { //it's the first day of the month
-            $follower_count_dao = DAOFactory::getDAO('FollowerCountDAO');
+            $count_dao = DAOFactory::getDAO('CountHistoryDAO');
             //by month
-            $follower_count_history_by_month = $follower_count_dao->getHistory($instance->network_user_id,
+            $follower_count_history_by_month = $count_dao->getHistory($instance->network_user_id,
             $instance->network, 'MONTH', 15, $this->insight_date);
             $insight_text = "<strong>";
             if ( isset($follower_count_history_by_month['milestone'])
@@ -64,9 +65,9 @@ class FollowerCountInsight extends InsightPluginParent implements InsightPlugin 
                 serialize($follower_count_history_by_month));
             }
         } else if ($insight_day_of_week == 0) { //it's Sunday
-            $follower_count_dao = DAOFactory::getDAO('FollowerCountDAO');
+            $count_dao = DAOFactory::getDAO('CountHistoryDAO');
             //by week
-            $follower_count_history_by_week = $follower_count_dao->getHistory($instance->network_user_id,
+            $follower_count_history_by_week = $count_dao->getHistory($instance->network_user_id,
             $instance->network, 'WEEK', 15, $this->insight_date);
             $this->logger->logInfo($this->insight_date." is Sunday; Count by week stats are ".
             Utils::varDumpToString($follower_count_history_by_week) , __METHOD__.','

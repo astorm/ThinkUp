@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -59,12 +59,16 @@ class TestOfCheckCrawlerController extends ThinkUpUnitTestCase {
     }
 
     public function testActiveInstancesMoreThan3Hours() {
+        $cfg = Config::getInstance();
+        $cfg->setValue('site_root_path', '/my/path/to/thinkup/');
+        $_SERVER['SERVER_NAME'] = 'mytestservername';
+
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-4h', 'is_active'=>1));
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-3h', 'is_active'=>1));
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-2h', 'is_active'=>1));
         $controller = new CheckCrawlerController(true);
         $results = $controller->go();
-        $this->assertEqual("Crawler hasn't run in 4 hours", $results);
+        $this->assertEqual("http://mytestservername/my/path/to/thinkup/: Crawler hasn't run in 4 hours", $results);
     }
 
     public function testInactiveInstancesMoreThan3Hours() {
@@ -77,13 +81,17 @@ class TestOfCheckCrawlerController extends ThinkUpUnitTestCase {
     }
 
     public function testInstanceDifferentThreshold() {
+        $cfg = Config::getInstance();
+        $cfg->setValue('site_root_path', '/my/path/to/thinkup/');
+        $_SERVER['SERVER_NAME'] = 'mytestservername';
+
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-2h', 'is_active'=>1));
 
         // 2nd argument is $argc, third argument is $argv
         $controller = new CheckCrawlerController(true, 1, array('scriptname', 1.0));
 
         $results = $controller->go();
-        $this->assertEqual("Crawler hasn't run in 2 hours", $results);
+        $this->assertEqual("http://mytestservername/my/path/to/thinkup/: Crawler hasn't run in 2 hours", $results);
 
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-3h', 'is_active'=>1));
         $instance_builders[] = FixtureBuilder::build('instances', array('crawler_last_run'=>'-4h', 'is_active'=>1));
@@ -92,6 +100,6 @@ class TestOfCheckCrawlerController extends ThinkUpUnitTestCase {
         $controller = new CheckCrawlerController(true, 1, array(1.0));
 
         $results = $controller->go();
-        $this->assertEqual("Crawler hasn't run in 4 hours", $results);
+        $this->assertEqual("http://mytestservername/my/path/to/thinkup/: Crawler hasn't run in 4 hours", $results);
     }
 }

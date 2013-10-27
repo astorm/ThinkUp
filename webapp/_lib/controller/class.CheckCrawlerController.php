@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -49,7 +49,8 @@ class CheckCrawlerController extends ThinkUpController {
         $instance_dao = DAOFactory::getDAO('InstanceDAO');
         $hours_since_last_crawl = $instance_dao->getHoursSinceLastCrawlerRun();
         if (isset($hours_since_last_crawl) && $hours_since_last_crawl > $this->threshold)  {
-            $this->addToView('message', "Crawler hasn't run in ".round($hours_since_last_crawl)." hours");
+            $this->addToView('message', Utils::getApplicationURL().": Crawler hasn't run in ".
+            round($hours_since_last_crawl)." hours");
         }
         return $this->generateView();
     }

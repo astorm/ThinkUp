@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -36,6 +36,8 @@ class PasswordResetController extends ThinkUpController {
 
         $this->view_mgr->addHelp('reset', 'userguide/accounts/index');
         $this->setViewTemplate('session.resetpassword.tpl');
+        $this->addHeaderJavaScript('assets/js/jqBootstrapValidation.js');
+        $this->addHeaderJavaScript('assets/js/validate-fields.js');
         $this->disableCaching();
 
         $config = Config::getInstance();
@@ -63,6 +65,7 @@ class PasswordResetController extends ThinkUpController {
                     $owner_dao->activateOwner($user->email);
                     $owner_dao->clearAccountStatus($user->email);
                     $owner_dao->resetFailedLogins($user->email);
+                    $owner_dao->updatePasswordToken($user->email, '');
                     $login_controller->addSuccessMessage('You have changed your password.');
                 }
                 return $login_controller->go();

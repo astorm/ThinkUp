@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -46,7 +46,7 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataIsReturned($ps);
     }
@@ -59,7 +59,7 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
             ':username'=>$username,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataIsReturned($ps);
     }
@@ -101,6 +101,7 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
             ':location'=>$user->location,
             ':description'=>$user->description,
             ':url'=>$user->url,
+            ':is_verified'=>$this->convertBoolToDB($user->is_verified),
             ':is_protected'=>$this->convertBoolToDB($user->is_protected),
             ':follower_count'=>$user->follower_count,
             ':post_count'=>$user->post_count,
@@ -113,19 +114,20 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
         $is_user_in_storage = $this->isUserInDB($user->user_id, $user->network);
         if (!$is_user_in_storage) {
             $q = "INSERT INTO #prefix#users (user_id, user_name, full_name, avatar, location, description, url, ";
-            $q .= "is_protected, follower_count, post_count, ".($has_friend_count ? "friend_count, " : "")." ".
+            $q .= "is_verified, is_protected, follower_count, post_count, ".
+            ($has_friend_count ? "friend_count, " : "")." ".
             ($has_favorites_count ? "favorites_count, " : "")." ".
             ($has_last_post ? "last_post, " : "")." found_in, joined, network  ".
             ($has_last_post_id ? ", last_post_id" : "").") ";
-            $q .= "VALUES ( :user_id, :username, :full_name, :avatar, :location, :description, :url, :is_protected, ";
-            $q .= ":follower_count, :post_count, ".($has_friend_count ? ":friend_count, " : "")." ".
+            $q .= "VALUES ( :user_id, :username, :full_name, :avatar, :location, :description, :url, :is_verified, ";
+            $q .= ":is_protected, :follower_count, :post_count, ".($has_friend_count ? ":friend_count, " : "")." ".
             ($has_favorites_count ? ":favorites_count, " : "")." ".
             ($has_last_post ? ":last_post, " : "")." :found_in, :joined, :network ".
             ($has_last_post_id ? ", :last_post_id " : "")." )";
         } else {
             $q = "UPDATE #prefix#users SET full_name = :full_name, avatar = :avatar,  location = :location, ";
-            $q .= "user_name = :username, description = :description, url = :url, is_protected = :is_protected, ";
-            $q .= "follower_count = :follower_count, post_count = :post_count,  ".
+            $q .= "user_name = :username, description = :description, url = :url, is_verified = :is_verified, ";
+            $q .= "is_protected = :is_protected, follower_count = :follower_count, post_count = :post_count,  ".
             ($has_friend_count ? "friend_count= :friend_count, " : "")." ".
             ($has_favorites_count ? "favorites_count= :favorites_count, " : "")." ".
             ($has_last_post ? "last_post= :last_post, " : "")." last_updated = NOW(), found_in = :found_in, ";
@@ -147,7 +149,7 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
         if ($has_last_post_id) {
             $vars[':last_post_id'] = $user->last_post_id;
         }
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $results = $this->getUpdateCount($ps);
         return $results;
@@ -161,7 +163,7 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
             ':user_id'=>(string)$user_id,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, "User");
     }
@@ -174,8 +176,19 @@ class UserMySQLDAO extends PDODAO implements UserDAO {
             ':user_name'=>$user_name,
             ':network'=>$network
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowAsObject($ps, "User");
+    }
+
+    public function deleteUsersByHashtagId($hashtag_id){
+        $q = "DELETE u.* ";
+        $q .= "FROM #prefix#users u INNER JOIN #prefix#posts t ON u.user_id=t.author_user_id ";
+        $q .= "INNER JOIN #prefix#hashtags_posts hp ON t.post_id = hp.post_id ";
+        $q .= "WHERE hp.hashtag_id= :hashtag_id;";
+        $vars = array(':hashtag_id'=>$hashtag_id);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        return $this->getDeleteCount($ps);
     }
 }

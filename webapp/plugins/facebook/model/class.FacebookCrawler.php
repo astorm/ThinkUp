@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -93,8 +93,9 @@ class FacebookCrawler {
 
             // Record the current number of page likes in follower count table
             if ($network == 'facebook page' && isset($user_details->likes) && !$this->page_like_count_set) {
-                $follower_count_dao = DAOFactory::getDAO('FollowerCountDAO');
-                $follower_count_dao->insert($this->instance->network_user_id, 'facebook page', $user_details->likes);
+                $count_dao = DAOFactory::getDAO('CountHistoryDAO');
+                $count_dao->insert($this->instance->network_user_id, 'facebook page', $user_details->likes, null,
+                'followers');
                 $this->page_like_count_set = true;
             }
 
@@ -128,6 +129,7 @@ class FacebookCrawler {
             $user_vals["follower_count"] = 0;
             $user_vals["location"] = isset($details->location->name)?$details->location->name:'';
             $user_vals["description"] = isset($details->about)?$details->about:'';
+            $user_vals["is_verifed"] = 0; //is_verified is for legitimate high quality sources
             $user_vals["is_protected"] = 1; //for now, assume a Facebook user is private
             $user_vals["post_count"] = 0;
             $user_vals["joined"] = null;
@@ -342,7 +344,7 @@ class FacebookCrawler {
                                 foreach ($post_comments as $c) {
                                     if (isset($c->from)) {
                                         $comment_id = explode("_", $c->id);
-                                        $comment_id = $comment_id[2];
+                                        $comment_id = $comment_id[sizeof($comment_id)-1];
                                         //only add to queue if not already in storage
                                         $comment_in_storage = $post_dao->getPost($comment_id, $network);
                                         if (!isset($comment_in_storage)) {
@@ -644,7 +646,7 @@ class FacebookCrawler {
         if (isset($friends->data)) {
             //store relationships in follows table
             $follows_dao = DAOFactory::getDAO('FollowDAO');
-            $follower_count_dao = DAOFactory::getDAO('FollowerCountDAO');
+            $count_dao = DAOFactory::getDAO('CountHistoryDAO');
             $user_dao = DAOFactory::getDAO('UserDAO');
 
             foreach ($friends->data as $friend) {
@@ -670,7 +672,7 @@ class FacebookCrawler {
                 }
             }
             //totals in follower_count table
-            $follower_count_dao->insert($user_id, $network, count($friends->data));
+            $count_dao->insert($user_id, $network, count($friends->data), null, 'followers');
         } elseif (isset($stream->error->type) && ($stream->error->type == 'OAuthException')) {
             throw new APIOAuthException($stream->error->message);
         }

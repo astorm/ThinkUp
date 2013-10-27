@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -39,18 +39,18 @@ $model_tests->add(new TestOfConfig());
 $model_tests->add(new TestOfFileDataManager());
 $model_tests->add(new TestOfCrawler());
 $model_tests->add(new TestOfFollowMySQLDAO());
-$model_tests->add(new TestOfFollowerCountMySQLDAO());
+$model_tests->add(new TestOfCountHistoryMySQLDAO());
 $model_tests->add(new TestOfGroupMySQLDAO());
 $model_tests->add(new TestOfGroupMemberMySQLDAO());
-$model_tests->add(new TestOfGroupMembershipCountMySQLDAO());
 $model_tests->add(new TestOfInsightBaselineMySQLDAO());
 $model_tests->add(new TestOfInsightMySQLDAO());
+$model_tests->add(new TestOfInsightTerms());
 $model_tests->add(new TestOfInstanceMySQLDAO());
-$model_tests->add(new TestOfInsightMySQLDAO());
 $model_tests->add(new TestOfDashboardModuleCacher());
 $model_tests->add(new TestOfInstaller());
 $model_tests->add(new TestOfInstallerMySQLDAO());
 $model_tests->add(new TestOfInviteMySQLDAO());
+$model_tests->add(new TestOfJSONDecoder());
 $model_tests->add(new TestOfLinkMySQLDAO());
 $model_tests->add(new TestOfLoader());
 $model_tests->add(new TestOfLocationMySQLDAO());
@@ -91,6 +91,9 @@ $model_tests->add(new TestOfPDODAO());
 $model_tests->add(new TestOfURLProcessor());
 $model_tests->add(new TestOfTableStatsMySQLDAO());
 $model_tests->add(new TestOfShortLinkMySQLDAO());
+$model_tests->add(new TestOfHashtagPostMySQLDAO());
+$model_tests->add(new TestOfInstanceHashtagMySQLDAO());
+$model_tests->add(new TestOfVideoMySQLDAO());
 
 $tr = new TextReporter();
 list($usec, $sec) = explode(" ", microtime());

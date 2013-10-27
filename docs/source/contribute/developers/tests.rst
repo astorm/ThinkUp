@@ -13,7 +13,7 @@ config variable to that name. You will also need a local installation of ThinkUp
 config variable equal to its URL--for example, ``http://localhost``.
 
 In ``webapp/config.inc.php``, in the DEVELOPER CONFIG section, set the name of your tests database, and the username
-and password to access it. This database name should match the one you just set in ``tests/config.tests.inc.php``. 
+and password to access it. This database name should match the one you just set in ``tests/config.tests.inc.php``.
 Finally, set ``$THINKUP_CFG['source_root_path']`` to the full path of the thinkup source files.
 
 Test Assumptions
@@ -146,7 +146,7 @@ There are a few ways to speed up the test runs:
 
     ``SKIP_UPGRADE_TESTS=1 php tests/all_tests.php``
 
-2.  On OS X, set up your test database to run in a RAM disk to speed up database i/o during testing.
+2.  On OS X, set up your test database to run in a RAM disk to speed up database I/O during testing.
 
     You will need to update the ``config.inc.php`` file to reflect the latest test override and test RAM disk option.
 
@@ -158,12 +158,24 @@ There are a few ways to speed up the test runs:
     ``sudo sh ./extras/dev/ramdisk/osx_make_ramdisk_db create -v``
 
     Run the tests with ``RD_MODE`` set to 1:
-    
-    ``RD_MODE=1 php tests/all_tests.php`` 
+
+    ``RD_MODE=1 php tests/all_tests.php``
 
     When you are done testing you can remove the RAM disk with this command:
 
     ``sudo sh extras/dev/ramdisk/osx_make_ramdisk_db delete -v``
+
+3.  On Ubuntu, set up your test database to run in a RAM disk to speed up database I/O during testing.
+
+    You will need to run:
+
+    ``sudo ./extras/dev/ramdisk/ubuntu_make_ramdisk_db``
+
+    When you are done you MUST run:
+
+    ``sudo ./extras/dev/ramdisk/ubuntu_remove_ramdisk_db``
+
+    Or your MySQL installation will be destroyed.
 
 I'm getting lots of test failures. Help!
 ----------------------------------------
@@ -177,6 +189,14 @@ Possible reasons for getting a high number of test failures include:
 -  An incorrect value for any of the test database values. Please make
    sure that both config.inc.php and config.tests.inc.php point to an
    existing, empty database.
+-  AppArmor which is installed on Ubuntu by default can prevent the ThinkUp test suite backup tests from writing to the
+   files it needs to. To fix this add the following to your ``/etc/apparmor.d/usr.sbin.mysqld`` file:
+
+   ``path_to_thinkup/webapp/data/backup/* rw,``
+
+   and then restart AppArmor with:
+
+   ``sudo /etc/init.d/apparmor reload``
 
 If you have double-checked these and everything appears to be intact,
 send an email to the mailing list or pop into the IRC channel and we'll

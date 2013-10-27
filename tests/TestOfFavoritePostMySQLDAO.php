@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -170,9 +170,18 @@ class TestOfFavoritePostMySQLDAO extends ThinkUpUnitTestCase {
     /**
      * Test creation of fav post, where the post has not yet been saved to database.
      */
-    public function testFavPostCreation() {
+    public function testAddFavoriteFullPost() {
         $favoriter_id = 21; //user 2
         $vals = $this->buildPostArray1();
+        $res = $this->dao->addFavorite($favoriter_id, $vals);
+        $this->assertEqual($res, 1);
+    }
+
+    public function testAddFavoriteMissingPostData() {
+        $favoriter_id = 21; //user 2
+        $vals = $this->buildFavoriteArray();
+        $this->expectException('Exception',
+        'Error: Favorited post ID 345840895515801 is not in storage and could not be inserted.');
         $res = $this->dao->addFavorite($favoriter_id, $vals);
         $this->assertEqual($res, 1);
     }
@@ -181,7 +190,7 @@ class TestOfFavoritePostMySQLDAO extends ThinkUpUnitTestCase {
      * Test creation of fav post, where post already exists in db, but not favorite bookkeeping,
      * and so we are just adding an entry to the favorites table.
      */
-    public function testFavPostCreationPostExists() {
+    public function testAddFavoritePostExists() {
         $favoriter_id = 21; //user 2
         $vals = $this->buildPostArray2();
         $res = $this->dao->addFavorite($favoriter_id, $vals);
@@ -341,7 +350,7 @@ class TestOfFavoritePostMySQLDAO extends ThinkUpUnitTestCase {
         //build post published one year ago today
         $builders[] = FixtureBuilder::build('posts', array('post_id'=>'abadadfd1212', 'author_user_id'=>'19',
         'author_username'=>'linkbaiter', 'author_fullname'=>'Link Baiter', 'is_geo_encoded'=>0,
-        'post_text'=>'This is link post '.$counter, 'source'=>'web', 'pub_date'=>'-366d',
+        'post_text'=>'This is link post '.$counter, 'source'=>'web', 'pub_date'=>'-365d',
         'reply_count_cache'=>0, 'retweet_count_cache'=>0, 'network'=>'twitter',
         'is_protected' => 0));
 
@@ -359,7 +368,7 @@ class TestOfFavoritePostMySQLDAO extends ThinkUpUnitTestCase {
         //build post published one year and 4 days ago today
         $builders[] = FixtureBuilder::build('posts', array('post_id'=>'abadadfd1213', 'author_user_id'=>'19',
         'author_username'=>'linkbaiter', 'author_fullname'=>'Link Baiter', 'is_geo_encoded'=>0,
-        'post_text'=>'This is link post '.$counter, 'source'=>'web', 'pub_date'=>'-370d',
+        'post_text'=>'This is link post '.$counter, 'source'=>'web', 'pub_date'=>'-369d',
         'reply_count_cache'=>0, 'retweet_count_cache'=>0, 'network'=>'twitter',
         'is_protected' => 0));
 
@@ -446,6 +455,15 @@ class TestOfFavoritePostMySQLDAO extends ThinkUpUnitTestCase {
         $vals['source']='web';
         $vals['network']= 'twitter';
         $vals['is_protected'] = 0;
+        return $vals;
+    }
+
+    private function buildFavoriteArray() {
+        $vals = array();
+        $vals["favoriter_id"]= "1075560752";
+        $vals["network"] = "facebook page";
+        $vals["author_user_id"] = "340319429401281";
+        $vals["post_id"]="345840895515801";
         return $vals;
     }
 }

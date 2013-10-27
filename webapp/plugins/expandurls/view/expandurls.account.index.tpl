@@ -16,10 +16,17 @@
 {include file="_plugin.admin-request.tpl"}
 </div>
 
-{$options_markup}
+
 
 {if $user_is_admin}
-    {include file="_plugin.showhider.tpl"}
     {include file="_usermessage.tpl" field="setup"}
-</div>
+    {include file="_plugin.showhider.tpl"}
 {/if}
+
+{if $options_markup}
+<p>
+{$options_markup}
+</p>
+{/if}
+
+{if $user_is_admin}</div>{/if}
