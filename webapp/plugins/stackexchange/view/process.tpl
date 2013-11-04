@@ -8,7 +8,7 @@
 </div>
 
 <p id="pulsestorm_ajaxqueue_observers" style="display:none;">
-    Done procesing raw rows.  <a href="/crawler/updatenow.php">Capture Data</a> to process users and posts.
+    Done procesing raw rows.  <a href="crawler/updatenow.php">Capture Data</a> to process users and posts.
 </p>
 
 <script type="text/javascript">
