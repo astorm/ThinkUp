@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -97,7 +97,7 @@ class TestOfListMembershipInsight extends ThinkUpUnitTestCase {
         $this->assertEqual($result->filename, 'listmembership');
         $this->assertPattern('/\@ev is on 8 new lists:/', $result->text);
         $this->assertPattern('/and \<a href="http:\/\/twitter.com\/listmaker\/list0\"\>list0\<\/a\>/', $result->text);
-        $this->assertPattern('/bringing the total to \<strong\>50 lists\<\/strong\>\./', $result->text);
+        $this->assertPattern('/bringing the total to \<strong\>58 lists\<\/strong\>\./', $result->text);
     }
 
     public function testLessThan10NewListMembershipWithLowHistory() {
@@ -155,6 +155,60 @@ class TestOfListMembershipInsight extends ThinkUpUnitTestCase {
         $this->assertPattern('/and 16 more/', $result->text);
     }
 
+    public function test1NewListMembershipNoHistory() {
+        // Assert that insight doesn't exist
+        $insight_dao = new InsightMySQLDAO();
+        $result = $insight_dao->getInsight('new_group_memberships', 1, date ('Y-m-d'));
+        $this->assertNull($result);
+
+        $builders = self::buildData($total_lists = 1);
+
+        $instance = new Instance();
+        $instance->id = 1;
+        $instance->network_user_id = '13';
+        $instance->network = 'twitter';
+        $instance->network_username = 'ev';
+        $stylestats_insight_plugin = new ListMembershipInsight();
+        $stylestats_insight_plugin->generateInsight($instance, array(), 3);
+
+        // Assert that insight got generated
+        $insight_dao = new InsightMySQLDAO();
+        $result = $insight_dao->getInsight('new_group_memberships', 1, date ('Y-m-d'));
+        $this->assertNotNull($result);
+        $this->assertEqual($result->slug, 'new_group_memberships');
+        $this->assertEqual($result->prefix, 'Made the list:');
+        $this->assertEqual($result->filename, 'listmembership');
+        $this->assertPattern('/\@ev is on a new list,/', $result->text);
+        $this->assertNoPattern('/bringing/', $result->text);
+    }
+
+    public function test1NewListMembershipWithHistory() {
+        // Assert that insight doesn't exist
+        $insight_dao = new InsightMySQLDAO();
+        $result = $insight_dao->getInsight('new_group_memberships', 1, date ('Y-m-d'));
+        $this->assertNull($result);
+
+        $builders = self::buildData($total_lists = 1, $build_history= true, $history_ceiling=5);
+
+        $instance = new Instance();
+        $instance->id = 1;
+        $instance->network_user_id = '13';
+        $instance->network = 'twitter';
+        $instance->network_username = 'ev';
+        $stylestats_insight_plugin = new ListMembershipInsight();
+        $stylestats_insight_plugin->generateInsight($instance, array(), 3);
+
+        // Assert that insight got generated
+        $insight_dao = new InsightMySQLDAO();
+        $result = $insight_dao->getInsight('new_group_memberships', 1, date ('Y-m-d'));
+        $this->assertNotNull($result);
+        $this->assertEqual($result->slug, 'new_group_memberships');
+        $this->assertEqual($result->prefix, 'Made the list:');
+        $this->assertEqual($result->filename, 'listmembership');
+        $this->assertPattern('/\@ev is on a new list,/', $result->text);
+        $this->assertPattern('/bringing the total to \<strong\>6 lists\<\/strong\>./', $result->text);
+    }
+
     private function buildData($total_lists, $build_history=false, $history_ceiling=50) {
         $builders = array();
 
@@ -178,14 +232,16 @@ class TestOfListMembershipInsight extends ThinkUpUnitTestCase {
 
         if ($build_history) {
             date ('Y-m-d', strtotime('-1 day'));
-            $builders[] = FixtureBuilder::build('group_member_count', array('member_user_id'=>'13',
-            'network'=>'twitter', 'date'=>date('Y-m-d'), 'count'=>$history_ceiling));
+            $builders[] = FixtureBuilder::build('count_history', array('network_user_id'=>'13',
+            'network'=>'twitter', 'date'=>date('Y-m-d'), type =>'group_memberships','count'=>$history_ceiling));
 
-            $builders[] = FixtureBuilder::build('group_member_count', array('member_user_id'=>'13',
-            'network'=>'twitter', 'date'=>date ('Y-m-d', strtotime('-1 day')), 'count'=>($history_ceiling-3)));
+            $builders[] = FixtureBuilder::build('count_history', array('network_user_id'=>'13',
+            'network'=>'twitter', 'date'=>date ('Y-m-d', strtotime('-1 day')), 'type' =>'group_memberships',
+            'count'=>($history_ceiling-3)));
 
-            $builders[] = FixtureBuilder::build('group_member_count', array('member_user_id'=>'13',
-            'network'=>'twitter', 'date'=>date ('Y-m-d', strtotime('-2 day')), 'count'=>($history_ceiling-5)));
+            $builders[] = FixtureBuilder::build('count_history', array('network_user_id'=>'13',
+            'network'=>'twitter', 'date'=>date ('Y-m-d', strtotime('-2 day')), 'type' =>'group_memberships',
+            'count'=>($history_ceiling-5)));
         }
 
         return $builders;

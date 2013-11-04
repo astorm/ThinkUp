@@ -9,19 +9,19 @@ Introduction
     You're reading the very beginning of that effort. This documentation is an incomplete, work-in-progress. Please 
     join us and help :doc:`fill in the gaps </contribute/documentation>`.
 
-`ThinkUp <http://thinkupapp.com>`_ is a free, open source web application that captures your posts, tweets, replies,
+`ThinkUp <http://thinkup.com>`_ is a free, open source web application that captures your posts, tweets, replies,
 retweets, friends, followers and links on social networks like Twitter and Facebook. With ThinkUp, you can store your
 social activity in a database that YOU control, making it easy to search, sort, analyze, publish and display activity
 from your network. All you need is a web server that can run a PHP application.
 
 `Gina Trapani <http://ginatrapani.org>`_ began building ThinkUp as a personal project in 2009. From 2010 until 2012,
-`Expert Labs <http://expertlabs.org>`_ incubated ThinkUp. Today development is led by ThinkUp LLC, a company founded
-by Anil Dash and Gina Trapani.
+`Expert Labs <http://expertlabs.org>`_ incubated ThinkUp. Today, ThinkUp LLC, a company founded by Anil Dash and
+Gina Trapani, leads development on the project.
 
 ThinkUp's source code is licensed under the `GNU General Public License <http://www.gnu.org/licenses/gpl.html>`_ and 
 is available on `GitHub <http://github.com/ginatrapani/ThinkUp>`_.
 
-Find out more at http://thinkupapp.com.
+Find out more at http://thinkup.com.
 
 Who ThinkUp Is For
 ------------------

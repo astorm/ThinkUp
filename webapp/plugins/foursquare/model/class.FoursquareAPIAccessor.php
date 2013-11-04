@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -46,7 +46,7 @@ class FoursquareAPIAccessor{
         $url = $this->api_domain.$endpoint.'?oauth_token='.$access_token;
 
         // If there are additional parameters passed in add them to the URL also
-        if($fields != null){
+        if ($fields != null){
             foreach( $fields as $key=>$value) {
                 $url = $url.'&'.$key.'='.$value;
             }

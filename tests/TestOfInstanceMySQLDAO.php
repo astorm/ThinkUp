@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -575,8 +575,6 @@ class TestOfInstanceMySQLDAO extends ThinkUpUnitTestCase {
 
         //Edit it.
         $i->last_post_id = 512;
-        $i->last_page_fetched_replies = 2;
-        $i->last_page_fetched_tweets = 17;
         $i->is_archive_loaded_follows = 1;
         $i->is_archive_loaded_replies = 1;
 
@@ -795,4 +793,16 @@ class TestOfInstanceMySQLDAO extends ThinkUpUnitTestCase {
         $this->assertEqual($result[1]->id, 6);
         $this->assertEqual($result[1]->network_username, "yaya");
     }
+
+    public function testSetPostArchiveLoaded() {
+        $builders[] = FixtureBuilder::build('instances', array('network_user_id'=>17,
+        'network_username'=>'johndoe', 'network'=>'twitter', 'network_viewer_id'=>15,
+        'crawler_last_run'=>'2010-01-01 12:00:01', 'is_active'=>1, 'is_archive_loaded_posts'=>0));
+
+        $this->DAO->setPostArchiveLoaded(17, 'twitter');
+        $result = $this->DAO->getByUsername('johndoe');
+
+        $this->assertTrue($result->is_archive_loaded_posts);
+    }
+
 }

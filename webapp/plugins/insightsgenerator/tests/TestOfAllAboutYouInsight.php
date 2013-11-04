@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -87,7 +87,7 @@ class TestOfAllAboutYouInsight extends ThinkUpUnitTestCase {
         $this->debug(Utils::varDumpToString($result));
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
-        $this->assertPattern('/\@testeriffic\'s posts contained the words/', $result->text);
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
         $this->assertPattern('/9 times/', $result->text);
     }
 
@@ -113,9 +113,36 @@ class TestOfAllAboutYouInsight extends ThinkUpUnitTestCase {
         $this->debug(Utils::varDumpToString($result));
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
-        $this->assertPattern('/\@testeriffic\'s posts contained the words/', $result->text);
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
         $this->assertPattern('/9 times/', $result->text);
         $this->assertPattern('/10 fewer times than the prior week/', $result->text);
+    }
+
+    public function testAllAboutYouInsightPriorGreaterBy1Baseline() {
+        // Get data ready that insight requires
+        $posts = self::getTestPostObjects();
+        $instance = new Instance();
+        $instance->id = 10;
+        $instance->network_username = 'testeriffic';
+        $instance->network = 'twitter';
+        $insight_plugin = new AllAboutYouInsight();
+
+        // Add a baseline from prior week
+        $last_week = date('Y-m-d', strtotime('-7 day'));
+        $builder = FixtureBuilder::build('insight_baselines', array('date'=>$last_week, 'slug'=>'all_about_you',
+        'instance_id'=>10, 'value'=>10));
+        $insight_plugin->generateInsight($instance, $posts, 3);
+
+        // Assert that week-over-week comparison is correct
+        $insight_dao = new InsightMySQLDAO();
+        $today = date ('Y-m-d');
+        $result = $insight_dao->getInsight('all_about_you', 10, $today);
+        $this->debug(Utils::varDumpToString($result));
+        $this->assertNotNull($result);
+        $this->assertIsA($result, "Insight");
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
+        $this->assertPattern('/9 times/', $result->text);
+        $this->assertPattern('/1 fewer time than the prior week/', $result->text);
     }
 
     public function testAllAboutYouInsightPriorSmallerBaseline() {
@@ -140,9 +167,36 @@ class TestOfAllAboutYouInsight extends ThinkUpUnitTestCase {
         $this->debug(Utils::varDumpToString($result));
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
-        $this->assertPattern('/\@testeriffic\'s posts contained the words/', $result->text);
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
         $this->assertPattern('/9 times/', $result->text);
         $this->assertPattern('/2 more times than the prior week/', $result->text);
+    }
+
+    public function testAllAboutYouInsightPriorSmallerByOneBaseline() {
+        // Get data ready that insight requires
+        $posts = self::getTestPostObjects();
+        $instance = new Instance();
+        $instance->id = 10;
+        $instance->network_username = 'testeriffic';
+        $instance->network = 'twitter';
+        $insight_plugin = new AllAboutYouInsight();
+
+        // Add a baseline from prior week
+        $last_week = date('Y-m-d', strtotime('-7 day'));
+        $builder = FixtureBuilder::build('insight_baselines', array('date'=>$last_week, 'slug'=>'all_about_you',
+        'instance_id'=>10, 'value'=>8));
+        $insight_plugin->generateInsight($instance, $posts, 3);
+
+        // Assert that week-over-week comparison is correct
+        $insight_dao = new InsightMySQLDAO();
+        $today = date ('Y-m-d');
+        $result = $insight_dao->getInsight('all_about_you', 10, $today);
+        $this->debug(Utils::varDumpToString($result));
+        $this->assertNotNull($result);
+        $this->assertIsA($result, "Insight");
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
+        $this->assertPattern('/9 times/', $result->text);
+        $this->assertPattern('/1 more time than the prior week/', $result->text);
     }
 
     public function testAllAboutYouInsightPriorEqualBaseline() {
@@ -167,7 +221,7 @@ class TestOfAllAboutYouInsight extends ThinkUpUnitTestCase {
         $this->debug(Utils::varDumpToString($result));
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
-        $this->assertPattern('/\@testeriffic\'s posts contained the words/', $result->text);
+        $this->assertPattern('/\@testeriffic\'s tweets contained the words/', $result->text);
         $this->assertPattern('/9 times/', $result->text);
         //assert no comparison to prior week
         $this->assertNoPattern('/prior week/', $result->text);

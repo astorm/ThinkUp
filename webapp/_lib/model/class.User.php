@@ -9,7 +9,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -69,6 +69,11 @@ class User {
      * @var url
      */
     var $url;
+    /**
+     *
+     * @var bool
+     */
+    var $is_verified;
     /**
      *
      * @var bool
@@ -154,6 +159,14 @@ class User {
             $this->location = $val['location'];
             $this->description = $val['description'];
             $this->url = $val['url'];
+            if (isset($val['is_verified'])) {
+                $this->is_verified = $val['is_verified'];
+            }
+            if ($this->is_verified == '') {
+                $this->is_verified = 0;
+            } elseif ($this->is_verified == 'true') {
+                $this->is_verified = 1;
+            }
             $this->is_protected = $val['is_protected'];
             if ($this->is_protected == '') {
                 $this->is_protected = 0;

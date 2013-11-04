@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -89,8 +89,9 @@ class PluginOptionController extends ThinkUpAdminController {
                                     $plugin_option_dao->deleteOption($id);
                                     $deleted++;
                                 } else {
-                                    $plugin_option_dao->updateOption($id, $name, $value);
-                                    $updated_total++;
+                                    if ($plugin_option_dao->updateOption($id, $name, $value) ) {
+                                        $updated_total++;
+                                    }
                                 }
                             }
                         }

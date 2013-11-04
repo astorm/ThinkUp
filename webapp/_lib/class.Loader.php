@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -112,7 +112,7 @@ class Loader {
             if (file_exists(THINKUP_ROOT_PATH . 'webapp')) {
                 define('THINKUP_WEBAPP_PATH', THINKUP_ROOT_PATH . 'webapp/');
             } else {
-                define('THINKUP_WEBAPP_PATH', THINKUP_ROOT_PATH . 'thinkup/');
+                define('THINKUP_WEBAPP_PATH', THINKUP_ROOT_PATH);
             }
         }
     }
@@ -125,7 +125,9 @@ class Loader {
      * @param string $path
      */
     public static function addPath($path) {
-        if (!isset(self::$lookup_path)) self::register();
+        if (!isset(self::$lookup_path)) {
+            self::register();
+        }
         self::$lookup_path[] = $path;
     }
 
@@ -177,7 +179,9 @@ class Loader {
      */
     public static function load($class) {
         // check if class is already in scope
-        if (class_exists($class, false)) return;
+        if (class_exists($class, false)) {
+            return;
+        }
 
         // if class is a standard ThinkUp object or interface
         foreach (self::$lookup_path as $path) {

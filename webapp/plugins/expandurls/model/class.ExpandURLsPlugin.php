@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -74,6 +74,10 @@ class ExpandURLsPlugin extends Plugin implements CrawlerPlugin {
         return $controller->go();
     }
 
+    public function renderInstanceConfiguration($owner, $instance_username, $instance_network) {
+        return '';
+    }
+
     /**
      * Run when the crawler does
      */
@@ -85,7 +89,7 @@ class ExpandURLsPlugin extends Plugin implements CrawlerPlugin {
 
         //Limit the number of links expanded each crawl
         $this->link_limit = isset($options['links_to_expand']->option_value) ?
-        (int)$options['links_to_expand']->option_value : 1500;
+        (int)$options['links_to_expand']->option_value : 500;
 
         if ($this->link_limit != 0) {
             //set Flickr API key
@@ -156,7 +160,9 @@ class ExpandURLsPlugin extends Plugin implements CrawlerPlugin {
                 if (!$has_expanded_flickr_link) {
                     if ($expanded_url != '' ) {
                         $image_src = URLProcessor::getImageSource($expanded_url);
-                        $this->link_dao->saveExpandedUrl($link->url, $expanded_url, '', $image_src);
+                        $url_details = URLExpander::getWebPageDetails($expanded_url);
+                        $this->link_dao->saveExpandedUrl($link->url, $expanded_url, $url_details['title'], $image_src,
+                        $url_details['description']);
                         $total_expanded = $total_expanded + 1;
                     } else {
                         $this->logger->logError($link->url." not a valid URL - relocates to nowhere",

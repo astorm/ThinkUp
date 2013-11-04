@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -43,22 +43,24 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':caption'=>$link->caption,
             ':post_key'=>$link->post_key
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getInsertId($ps);
     }
 
-    public function saveExpandedURL($url, $expanded, $title = '', $image_src = '' ){
+    public function saveExpandedURL($url, $expanded, $title = '', $image_src = '', $description = '' ){
         $vars = array(
             ':url'=>$url,
             ':expanded'=>$expanded,
             ':title'=>$title,
+            ':description'=>$description,
             ':image_src'=>$image_src
         );
         $q  = "UPDATE #prefix#links ";
-        $q .= "SET expanded_url=:expanded, title=:title, image_src=:image_src WHERE url=:url ";
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        $q .= "SET expanded_url=:expanded, title=:title, description = :description , image_src=:image_src ";
+        $q .= "WHERE url=:url ";
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         $ret = $this->getUpdateCount($ps);
@@ -77,7 +79,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':url'=>$url,
             ':error'=>$error_text
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         $ret = $this->getUpdateCount($ps);
@@ -103,7 +105,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':caption'=>$link->caption,
             ':post_key'=>$link->post_key
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getUpdateCount($ps);
     }
@@ -135,7 +137,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':limit'=>$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $all_rows = $this->getDataRowsAsArrays($ps);
         $links = array();
@@ -143,6 +145,24 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             $links[] = $this->setLinkWithPost($row);
         }
         return $links;
+    }
+
+    public function countLinksPostedByUserSinceDaysAgo($user_id, $network, $days_ago=7) {
+        $q = "SELECT COUNT(*) AS count FROM #prefix#links AS l ";
+        $q .= "INNER JOIN #prefix#posts AS p ON p.id = l.post_key ";
+        $q .= "WHERE p.author_user_id=:user_id AND p.network=:network ";
+        $q .= "AND p.pub_date>=DATE_SUB(CURDATE(), INTERVAL :days_ago DAY) ";
+        $vars = array(
+            ':user_id'=>$user_id,
+            ':network'=>$network,
+            ':days_ago'=>$days_ago
+        );
+
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        $result = $this->getDataRowAsArray($ps);
+
+        return (int)$result['count'];
     }
 
     /**
@@ -179,7 +199,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':limit'=>$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         return $this->getDataRowsAsObjects($ps, "Link");
     }
@@ -210,7 +230,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':limit'=>$count,
             ':start_on_record'=>(int)$start_on_record
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
         $all_rows = $this->getDataRowsAsArrays($ps);
         $links = array();
@@ -232,7 +252,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
         $vars = array(
             ':limit'=>$limit
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowsAsObjects($ps, 'Link');
@@ -250,7 +270,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             $vars[':limit'] = $limit;
         }
 
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         $rows = $this->getDataRowsAsArrays($ps);
@@ -268,7 +288,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
         $vars = array(
             ':id'=>$id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowAsObject($ps, "Link");
@@ -281,7 +301,7 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
         $vars = array(
             ':url'=>$url
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
         $ps = $this->execute($q, $vars);
 
         return $this->getDataRowAsObject($ps, "Link");
@@ -306,10 +326,20 @@ class LinkMySQLDAO extends PDODAO implements LinkDAO {
             ':title'=>$title,
             ':id'=>$id
         );
-        if ($this->profiler_enabled) Profiler::setDAOMethod(__METHOD__);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
 
         $ps = $this->execute($q, $vars);
 
         return $this->getUpdateCount($ps);
+    }
+
+    public function deleteLinksByHashtagId($hashtag_id) {
+        $q  = "DELETE l.* FROM #prefix#links l INNER JOIN #prefix#posts t ON l.post_key =t.id ";
+        $q .= "INNER JOIN #prefix#hashtags_posts hp ON t.post_id = hp.post_id ";
+        $q .= "WHERE hp.hashtag_id=:hashtag_id;";
+        $vars = array(':hashtag_id'=>$hashtag_id);
+        if ($this->profiler_enabled) { Profiler::setDAOMethod(__METHOD__); }
+        $ps = $this->execute($q, $vars);
+        return $this->getDeleteCount($ps);
     }
 }

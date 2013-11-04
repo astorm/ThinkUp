@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -68,6 +68,10 @@ class HelloThinkUpPlugin extends Plugin implements CrawlerPlugin, PostDetailPlug
         * }
         *
         */
+    }
+
+    public function renderInstanceConfiguration($owner, $instance_username, $instance_network) {
+        return '';
     }
 
     public function getPostDetailMenuItems($post) {

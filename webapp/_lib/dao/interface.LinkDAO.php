@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -74,6 +74,14 @@ interface LinkDAO {
      */
     public function getLinksByFriends($user_id, $network, $count = 15, $page = 1, $is_public = false);
     /**
+     * Get the number of links posted by a user.
+     * @param int $user_id
+     * @param str $network
+     * @param int $days_ago
+     * @return int links count
+     */
+    public function countLinksPostedByUserSinceDaysAgo($user_id, $network, $days_ago = 7);
+    /**
      * Get the links in a user's favorites.
      * @param int $user_id
      * @param str $network
@@ -127,4 +135,10 @@ interface LinkDAO {
      * @return array of links table row arrays
      */
     public function getLinksForPost($post_id, $network = 'twitter');
+    /**
+     * Delete links given a hashtag ID.
+     * @param int $hashtag_id
+     * @return int Total number of affected rows
+     */
+    public function deleteLinksByHashtagId($hashtag_id);
 }

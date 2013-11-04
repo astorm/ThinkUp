@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -176,7 +176,7 @@ class Installer {
      */
     public function checkDependency($libs = array()) {
         $ret = array('curl'=>false, 'gd'=>false, 'pdo'=>false, 'pdo_mysql'=>false, 'json'=>false, 'hash'=>false,
-        'simplexml'=>false);
+        'ZipArchive'=>false);
 
         // check curl
         if ( self::curlDependenciesMet() ) {
@@ -202,9 +202,9 @@ class Installer {
         if ( extension_loaded('hash') ) {
             $ret['hash'] = true;
         }
-        // check php5-simplexml
-        if ( extension_loaded('simplexml') ) {
-            $ret['simplexml'] = true;
+        // check ZipArchive
+        if ( class_exists('ZipArchive')) {
+            $ret['ZipArchive'] = true;
         }
         // when testing
         if ( defined('TESTS_RUNNING') && TESTS_RUNNING && !empty($libs) ) {
@@ -481,7 +481,7 @@ class Installer {
     }
 
     /**
-     * Populate tables/execute queries in build-db_mysql.sql
+     * Populate tables/execute queries in build-db_mysql-upcoming-release.sql
      *
      * @param array $config database configuration
      * @return array Queries for update
@@ -497,14 +497,14 @@ class Installer {
     }
 
     /**
-     * Read the contents of the webapp/install/sql/build-db_mysql.sql file.
+     * Read the contents of the webapp/install/sql/build-db_mysql-upcoming-release.sql file.
      * Replace all instances of 'tu_' with the custom table prefix.
      *
      * @param string $table_prefix custom table prefix to replace the 'tu_' prefix
      * @return string
      */
     private function getInstallQueries($table_prefix) {
-        $query_file = THINKUP_WEBAPP_PATH . 'install/sql/build-db_mysql.sql';
+        $query_file = THINKUP_WEBAPP_PATH . 'install/sql/build-db_mysql-upcoming-release.sql';
         if ( !file_exists($query_file) ) {
             throw new InstallerException("File <code>$query_file</code> is not found.", self::ERROR_FILE_NOT_FOUND);
         }
@@ -751,12 +751,12 @@ class Installer {
     }
 
     /**
-     * Return array of tables that appear in ThinkUp's build-db_mysql.sql file
+     * Return array of tables that appear in ThinkUp's build-db_mysql-upcoming-release.sql file
      * @return array Table names
      */
     public function getTablesToInstall() {
         $table_names = array();
-        $install_queries = file_get_contents(THINKUP_WEBAPP_PATH."install/sql/build-db_mysql.sql");
+        $install_queries = file_get_contents(THINKUP_WEBAPP_PATH."install/sql/build-db_mysql-upcoming-release.sql");
         $queries = explode(';', $install_queries);
         if ( $queries[count($queries)-1] == '' ) {
             array_pop($queries);

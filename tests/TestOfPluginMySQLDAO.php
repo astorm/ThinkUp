@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -45,15 +45,6 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $this->logger->close();
     }
 
-    /**
-     * For PHP 5.2 compatibility, this method must be public so that we can call usort($plugins,
-     * 'TestOfPluginMySQLDAO::pluginSort')
-     * private/self::pluginSort doesn't work in PHP 5.2
-     */
-    public static function pluginSort($a, $b) {
-        return strcmp($a->name, $b->name);
-    }
-
     public function testGetInstalledPlugins() {
         // build our data
         $builders_array = $this->buildData();
@@ -61,35 +52,40 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $dao = new PluginMySQLDAO();
 
         $plugins = $dao->getInstalledPlugins();
-        $this->assertEqual(count($plugins), 9);
+        $this->assertTrue(count($plugins) >= 9);
 
-        usort($plugins, 'TestOfPluginMySQLDAO::pluginSort');
-        $this->assertEqual($plugins[0]->name,"Expand URLs");
-        $this->assertEqual($plugins[0]->folder_name,"expandurls");
+        $plugin_names = array();
+        $plugin_folder_names = array();
+        foreach ($plugins as $plugin) {
+            $plugin_names[] = $plugin->name;
+            $plugin_folder_names[] = $plugin->folder_name;
+        }
+        $this->assertTrue(in_array('Expand URLs', $plugin_names));
+        $this->assertTrue(in_array('expandurls', $plugin_folder_names));
 
-        $this->assertEqual($plugins[1]->name,"Facebook");
-        $this->assertEqual($plugins[1]->folder_name,"facebook");
+        $this->assertTrue(in_array('Facebook', $plugin_names));
+        $this->assertTrue(in_array('facebook', $plugin_folder_names));
 
-        $this->assertEqual($plugins[2]->name,"Foursquare");
-        $this->assertEqual($plugins[2]->folder_name,"foursquare");
+        $this->assertTrue(in_array('Foursquare', $plugin_names));
+        $this->assertTrue(in_array('foursquare', $plugin_folder_names));
 
-        $this->assertEqual($plugins[3]->name, "GeoEncoder");
-        $this->assertEqual($plugins[3]->folder_name, "geoencoder");
+        $this->assertTrue(in_array('GeoEncoder', $plugin_names));
+        $this->assertTrue(in_array('geoencoder', $plugin_folder_names));
 
-        $this->assertEqual($plugins[4]->name,"Google+");
-        $this->assertEqual($plugins[4]->folder_name,"googleplus");
+        $this->assertTrue(in_array('Google+', $plugin_names));
+        $this->assertTrue(in_array('googleplus', $plugin_folder_names));
 
-        $this->assertEqual($plugins[5]->name,"Hello ThinkUp");
-        $this->assertEqual($plugins[5]->folder_name,"hellothinkup");
+        $this->assertTrue(in_array('Hello ThinkUp', $plugin_names));
+        $this->assertTrue(in_array('hellothinkup', $plugin_folder_names));
 
-        $this->assertEqual($plugins[6]->name,"Insights Generator");
-        $this->assertEqual($plugins[6]->folder_name,"insightsgenerator");
+        $this->assertTrue(in_array('Insights Generator', $plugin_names));
+        $this->assertTrue(in_array('insightsgenerator', $plugin_folder_names));
 
-        $this->assertEqual($plugins[7]->name,"Twitter");
-        $this->assertEqual($plugins[7]->folder_name,"twitter");
+        $this->assertTrue(in_array('Twitter', $plugin_names));
+        $this->assertTrue(in_array('twitter', $plugin_folder_names));
 
-        $this->assertEqual($plugins[8]->name,"Twitter Realtime");
-        $this->assertEqual($plugins[8]->folder_name,"twitterrealtime");
+        $this->assertTrue(in_array('Twitter Realtime', $plugin_names));
+        $this->assertTrue(in_array('twitterrealtime', $plugin_folder_names));
     }
 
     public function testInsertPlugin() {
@@ -150,7 +146,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $plugin = $this->createPlugin();
         $plugin->name = 'has no home page';
         $plugin->homepage = null;
-        $this->assertEqual($dao->insertPlugin($plugin), 9);
+        $this->assertEqual($dao->insertPlugin($plugin), 10);
         $sql = "select * from " . $this->table_prefix . 'plugins where name = "' . $plugin->name . '"';
         $stmt = PluginMySQLDAO::$PDO->query($sql);
         $data = $stmt->fetch();
@@ -160,7 +156,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $plugin = $this->createPlugin(array('is_active' => false));
         $plugin->name = 'not active';
         $plugin->homepage = null;
-        $this->assertEqual($dao->insertPlugin($plugin), 10);
+        $this->assertEqual($dao->insertPlugin($plugin), 11);
         $sql = "select * from " . $this->table_prefix . 'plugins where name = "' . $plugin->name . '"';
         $stmt = PluginMySQLDAO::$PDO->query($sql);
         $data = $stmt->fetch();
@@ -303,7 +299,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
 
         $this->assertEqual($dao->getPluginId('twitter'), 1);
         $this->assertEqual($dao->getPluginId('idontexist'), null);
-        $this->assertEqual($dao->getPluginId('testpluginact'), 7);
+        $this->assertEqual($dao->getPluginId('testpluginact'), 8);
     }
 
     public function testGetPluginFolder() {
@@ -314,7 +310,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
 
         $this->assertEqual($dao->getPluginFolder(1), 'twitter');
         $this->assertEqual($dao->getPluginFolder(99), null);
-        $this->assertEqual($dao->getPluginFolder(7), 'testpluginact');
+        $this->assertEqual($dao->getPluginFolder(8), 'testpluginact');
     }
 
     public function testGetAllPlugins() {
@@ -324,9 +320,9 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $dao = new PluginMySQLDAO();
 
         $plugins = $dao->getAllPlugins();
-        $this->assertEqual(count($plugins), 7);
-        $this->assertEqual($plugins[5]->name, "My Test Plugin");
-        $this->assertEqual($plugins[5]->folder_name, "testplugin");
+        $this->assertEqual(count($plugins), 8);
+        $this->assertEqual($plugins[6]->name, "My Test Plugin");
+        $this->assertEqual($plugins[6]->folder_name, "testplugin");
 
         // no plugins?
         $builders_array = null;
@@ -340,7 +336,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $dao = new PluginMySQLDAO();
         $plugins = $dao->getActivePlugins();
 
-        $this->assertEqual(count($plugins), 6);
+        $this->assertEqual(count($plugins), 7);
         $this->assertEqual($plugins[0]->name,"Twitter");
         $this->assertEqual($plugins[0]->folder_name,"twitter");
 
@@ -382,7 +378,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $plugin1 = array(
             'name' => 'My Test Plugin', 'folder_name' => 'testplugin',
             'description' => 'Proof of concept plugin',
-            'author' => 'Gina Trapani', 'homepage' => 'http://thinkupapp.com',
+            'author' => 'Gina Trapani', 'homepage' => 'http://thinkup.com',
             'version' => '0.01', 'is_active' =>0
         );
         $builder1 = FixtureBuilder::build(self::TEST_TABLE,  $plugin1);
@@ -390,7 +386,7 @@ class TestOfPluginMySQLDAO extends ThinkUpUnitTestCase {
         $plugin2 = array(
             'name' => 'My Test Plugin Activated', 'folder_name' => 'testpluginact',
             'description' => 'Proof of concept plugin',
-            'author' => 'Gina Trapani', 'homepage' => 'http://thinkupapp.com',
+            'author' => 'Gina Trapani', 'homepage' => 'http://thinkup.com',
             'version' => '0.01', 'is_active' => 1
         );
         $builder2 = FixtureBuilder::build(self::TEST_TABLE,  $plugin2);

@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -136,10 +136,10 @@ class DAOFactory {
         'PluginOptionDAO' => array(
     //MySQL Version
             'mysql' => 'PluginOptionMySQLDAO' ),
-    //Follower Count MySQL DAO
-        'FollowerCountDAO' => array(
+    //Count History MySQL DAO
+        'CountHistoryDAO' => array(
     //MySQL Version
-            'mysql' => 'FollowerCountMySQLDAO'),
+            'mysql' => 'CountHistoryMySQLDAO'),
     //Installer MySQL DAO
         'InstallerDAO' => array (
     //MySQL Version
@@ -160,10 +160,6 @@ class DAOFactory {
         'GroupDAO' => array (
     //MySQL Version
             'mysql' => 'GroupMySQLDAO'),
-    //Group Membership Count MySQL DAO
-        'GroupMembershipCountDAO' => array (
-    //MySQL Version
-            'mysql' => 'GroupMembershipCountMySQLDAO'),
     //Group Member MySQL DAO
         'GroupMemberDAO' => array (
     //MySQL Version
@@ -186,7 +182,20 @@ class DAOFactory {
             'mysql' => 'InsightBaselineMySQLDAO'),
         'InsightDAO' => array (
     //MySQL Version
-            'mysql' => 'InsightMySQLDAO')
+            'mysql' => 'InsightMySQLDAO'),
+    //Instance Hashtag MySQL DAO
+        'InstanceHashtagDAO' => array(
+    //MySQL Version
+            'mysql' => 'InstanceHashtagMySQLDAO' ),
+    //Hashtag Post DAO
+        'HashtagPostDAO' => array(
+    //MySQL Version
+            'mysql' => 'HashtagPostMySQLDAO' ),
+    //Video DAO
+        'VideoDAO' => array(
+    //MySQL Version
+            'mysql' => 'VideoMySQLDAO' )
+
     );
 
     /*

@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -26,6 +26,6 @@
  * @license http://www.gnu.org/licenses/gpl.html
  * @copyright 2009-2013 Dwi Widiastuti, Gina Trapani, Guillaume Boudreau
  */
-$THINKUP_VERSION = '2.0-beta.2';
+$THINKUP_VERSION = '2.0-beta.8';
 $THINKUP_VERSION_REQUIRED['php'] = '5.2';
 $THINKUP_VERSION_REQUIRED['mysql'] = '5';

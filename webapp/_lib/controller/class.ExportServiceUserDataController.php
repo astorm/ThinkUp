@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -94,10 +94,9 @@ This zip archive contains all the data related to a specific service user gather
                 $owner_dao = DAOFactory::getDAO('OwnerDAO');
                 $owner = $owner_dao->getByEmail($this->getLoggedInUser());
                 $this->addToView('instances', $instance_dao->getByOwner($owner));
-                $this->addInfoMessage('To export and download a single service user\'s data, '.
-                'choose a service user and click on the Export User Data button. Extract the zip file '.
-                'and refer to the README.txt contained within for instructions on how to import the data '.
-                'into another ThinkUp database.' );
+                $this->addInfoMessage('Choose a user\'s data to export. '.
+                '(You\'ll find a README.txt file in the zip archive with instructions on how to import the data '.
+                'into another ThinkUp database.)' );
             }
         }
         return $this->generateView();
@@ -127,7 +126,7 @@ Commands to run:
 
             self::exportPostsRepliesRetweetsFavoritesMentions($username, $user_id, $service);
             self::exportFollowsAndFollowers($user_id, $service);
-            self::exportFollowerCountHistory($user_id, $service);
+            self::exportCountHistory($user_id, $service);
             return true;
         } catch(Exception $e) {
             $err = $e->getMessage();
@@ -295,17 +294,17 @@ Commands to run:
         self::appendToReadme($import_instructions);
     }
 
-    protected function exportFollowerCountHistory($user_id, $network) {
+    protected function exportCountHistory($user_id, $network) {
         //just the max of each day's count
-        $follower_count_table_file = FileDataManager::getBackupPath('follower_count.tmp');
+        $count_history_table_file = FileDataManager::getBackupPath('count_history.tmp');
 
         $export_dao = DAOFactory::getDAO('ExportDAO');
-        $export_dao->exportFollowerCountToFile($user_id, $network, $follower_count_table_file);
+        $export_dao->exportCountHistoryToFile($user_id, $network, $count_history_table_file);
 
-        $this->files_to_zip[] = array('path'=>$follower_count_table_file, 'name'=>'follower_count.tmp');
+        $this->files_to_zip[] = array('path'=>$count_history_table_file, 'name'=>'count_history.tmp');
 
-        $import_instructions = "LOAD DATA INFILE '/your/path/to/follower_count.tmp' ";
-        $import_instructions .= "IGNORE INTO TABLE tu_follower_count;
+        $import_instructions = "LOAD DATA INFILE '/your/path/to/count_history.tmp' ";
+        $import_instructions .= "IGNORE INTO TABLE tu_count_history;
 
 ";
         self::appendToReadme($import_instructions);

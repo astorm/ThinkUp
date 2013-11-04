@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -234,8 +234,14 @@ class DashboardModuleCacher {
                 $post_text_label = date("M j",  date_format (date_create($post->pub_date), 'U' ));
             }
 
+            // Concat text and clean up any encoding snags
+            $text_shortened = substr($post_text_label, 0, 100) . '...';
+            // Doesn't work as expected on PHP 5.4
+            //$text_clean = iconv("UTF-8", "ISO-8859-1//IGNORE", $text_shortened);
+            $text_clean= mb_convert_encoding($text_shortened, 'UTF-8', 'UTF-8');
+
             $result_set[] = array('c' => array(
-            array('v' => substr($post_text_label, 0, 100) . '...'),
+            array('v' => $text_clean),
             array('v' => intval($post->reply_count_cache)),
             array('v' => intval($post->all_retweets)),
             array('v' => intval($post->favlike_count_cache)),

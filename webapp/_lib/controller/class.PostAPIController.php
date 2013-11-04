@@ -8,7 +8,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -115,6 +115,11 @@ class PostAPIController extends ThinkUpController {
      */
     public $include_rts = false;
     /**
+     * The keyword to use. No default value. In requests that require hashtag data must be set.
+     * @var str
+     */
+    public $keyword;    
+    /**
      * A User object set when either the user_id or username variables are set. If you are using User data at any point
      * in this class, you should use this object.
      * @var User
@@ -130,6 +135,17 @@ class PostAPIController extends ThinkUpController {
      * @var UserDAO
      */
     private $user_dao;
+    /**
+     * A Hashtag object set when either the hashtag_id or hashtag_name variables are set.
+     * If you are using Hashtag data at any point in this class, you should use this object.
+     * @var hashtag
+     */
+    private $hashtag;
+    /**
+     *
+     * @var HashtagDAO
+     */
+    private $hashtag_dao;    
     /**
      * Constructor
      *
@@ -199,7 +215,10 @@ class PostAPIController extends ThinkUpController {
         if (isset($_GET['include_rts'])) {
             $this->include_rts = $this->isTrue($_GET['include_rts']);
         }
-
+        if (isset($_GET['keyword'])) {
+            $this->keyword = $_GET['keyword'];
+        }
+        
         /*
          * END READ IN OF QUERY STRING VARS
          */
@@ -269,7 +288,7 @@ class PostAPIController extends ThinkUpController {
         /*
          * Check if the API is disabled and, if it is, throw the appropriate exception.
          *
-         * Docs: http://thinkupapp.com/docs/userguide/api/errors/apidisabled.html
+         * Docs: http://thinkup.com/docs/userguide/api/errors/apidisabled.html
          */
         $is_api_disabled = Config::getInstance()->getValue('is_api_disabled');
         if ($is_api_disabled) {
@@ -279,6 +298,7 @@ class PostAPIController extends ThinkUpController {
         // fetch the correct PostDAO and UserDAO from the DAOFactory
         $this->post_dao = DAOFactory::getDAO('PostDAO');
         $this->user_dao = DAOFactory::getDAO('UserDAO');
+        $this->hashtag_dao = DAOFactory::getDAO('HashtagDAO');
 
         /*
          * Use the information gathered from the query string to retrieve a
@@ -292,6 +312,18 @@ class PostAPIController extends ThinkUpController {
         } else {
             $this->user = null;
         }
+        
+       /*
+        * Use the information gathered from the query string to retrieve a
+        * Hashtag object. This will be the standard object with which to get
+        * Hashtag information from in API calls.
+        */
+        if (!is_null($this->keyword) && !is_null($this->network)) {
+            $this->hashtag = $this->hashtag_dao->getHashtag($this->keyword,$this->network);
+        } else {
+            $this->hashtag = null;
+        }
+        
         //Privacy checks
         if (substr($this->type, 0, 4)=='user') { //user-related API call
             if (is_null($this->user)) {
@@ -337,7 +369,7 @@ class PostAPIController extends ThinkUpController {
              *
              * Optional arguments: network, include_entities, include_replies, trim_user
              *
-             * Docs: http://thinkupapp.com/docs/userguide/api/posts/post.html
+             * Docs: http://thinkup.com/docs/userguide/api/posts/post.html
              */
             case 'post':
                 if (is_null($this->post_id)) {
@@ -356,7 +388,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, order_by, unit, count, page, include_entities, include_replies,
                  * trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/post_retweets.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/post_retweets.html
                  */
             case 'post_retweets':
                 if (is_null($this->post_id)) {
@@ -378,7 +410,7 @@ class PostAPIController extends ThinkUpController {
                  *
                  * Ordering can only be done by either location or follower count.
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/post_replies.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/post_replies.html
                  */
             case 'post_replies':
                 if (is_null($this->post_id)) {
@@ -401,7 +433,7 @@ class PostAPIController extends ThinkUpController {
                  *
                  * Ordering can only be done by either location or follower count.
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/post_replies.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/post_replies.html
                  */
             case 'post_replies_in_range':
                 if (is_null($this->post_id) || is_null($this->from) || is_null($this->until)) {
@@ -421,7 +453,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, geo_encoded_only, include_original_post, include_entities,
                  * include_replies, trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/related_posts.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/related_posts.html
                  */
             case 'related_posts':
                 if (is_null($this->post_id)) {
@@ -440,7 +472,7 @@ class PostAPIController extends ThinkUpController {
                  *
                  * Optional arguments: network, count, page, include_entities, include_replies, trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_posts_most_replied_to.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_posts_most_replied_to.html
                  */
             case 'user_posts_most_replied_to':
                 $data = $this->post_dao->getMostRepliedToPosts($this->user->user_id, $this->network, $this->count,
@@ -454,7 +486,7 @@ class PostAPIController extends ThinkUpController {
                  *
                  * Optional arguments: network, count, page, include_entities, include_replies, trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_posts_most_retweeted.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_posts_most_retweeted.html
                  */
             case 'user_posts_most_retweeted':
                 $data = $this->post_dao->getMostRetweetedPosts($this->user->user_id, $this->network, $this->count,
@@ -469,7 +501,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_posts.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_posts.html
                  */
             case 'user_posts':
                 $data = $this->post_dao->getAllPosts($this->user->user_id, $this->network, $this->count,
@@ -484,7 +516,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_posts_in_range.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_posts_in_range.html
                  */
             case 'user_posts_in_range':
                 if (is_null($this->from) || is_null($this->until)) {
@@ -504,7 +536,7 @@ class PostAPIController extends ThinkUpController {
                  *
                  * Optional arguments: network, count, page, include_rts, include_entities, include_replies, trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_mentions.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_mentions.html
                  */
             case 'user_mentions':
                 $data = $this->post_dao->getAllMentions($this->user->username, $this->count, $this->network,
@@ -539,7 +571,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_questions.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_questions.html
                  */
             case 'user_questions':
                 $data = $this->post_dao->getAllQuestionPosts($this->user->user_id, $this->network, $this->count,
@@ -554,7 +586,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/posts/user_questions.html
+                 * Docs: http://thinkup.com/docs/userguide/api/posts/user_questions.html
                  */
             case 'user_questions_in_range':
                 $data = $this->post_dao->getAllQuestionPostsInRange($this->user->user_id, $this->network, $this->count,
@@ -569,7 +601,7 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * http://thinkupapp.com/docs/userguide/api/posts/user_replies.html
+                 * http://thinkup.com/docs/userguide/api/posts/user_replies.html
                  */
             case 'user_replies':
                 $data = $this->post_dao->getAllReplies($this->user->user_id, $this->network, $this->count,
@@ -584,17 +616,41 @@ class PostAPIController extends ThinkUpController {
                  * Optional arguments: network, count, page, order_by, direction, include_entities, include_replies,
                  * trim_user
                  *
-                 * http://thinkupapp.com/docs/userguide/api/posts/user_replies.html
+                 * http://thinkup.com/docs/userguide/api/posts/user_replies.html
                  */
             case 'user_replies_in_range':
                 $data = $this->post_dao->getAllRepliesInRange($this->user->user_id, $this->network, $this->count,
                 $this->from, $this->until, $this->page, $this->order_by, $this->direction, $this->is_public);
                 break;
+                
+                /*
+                 * Gets posts that contains a Keyword.
+                *
+                * Required arguments: keyword and network
+                *
+                * Optional arguments: count, page, order_by, direction, include_entities, trim_user
+                *
+                * Docs: http://thinkup.com/docs/userguide/api/posts/keyword_posts.html
+                */
+            case 'keyword_posts':
+                if (is_null($this->keyword) || is_null($this->network)) {
+                    $m = 'A request of type ' . $this->type . ' requires valid keyword and network ';
+                    $m .= 'parameters to be specified.';
+                    throw new RequiredArgumentMissingException($m);
+                }
+                elseif (is_null($this->hashtag) && !is_null($this->keyword) && !is_null($this->network)) {
+                    throw new KeywordNotFoundException();
+                }
+                else {
+                    $data = $this->post_dao->getAllPostsByHashtagId($this->hashtag->id, $this->network,
+                            $this->count, $this->order_by, $this->direction, $this->page, $this->is_public);
+                }
+                break;
 
                 /*
                  * Generate an error because the API call type was not recognized.
                  *
-                 * Docs: http://thinkupapp.com/docs/userguide/api/errors/apicalltypenotrecognised.html
+                 * Docs: http://thinkup.com/docs/userguide/api/errors/apicalltypenotrecognised.html
                  */
             default:
                 throw new APICallTypeNotRecognizedException($this->type);
@@ -779,13 +835,15 @@ class PostAPIController extends ThinkUpController {
                          * made to fill in the missing details.
                          *
                          * Not 100% sure if this is a good idea but it works.
-                         */
-                        $user_api_call = json_decode(Utils::getURLContents(
-                                                'https://api.twitter.com/1/users/show.json?screen_name=' . $username));
+                         * Update, Feb 2013: This doesn't work with Twitter API v 1.1, commenting out.
 
-                        $mention->name = $user_api_call->name;
-                        $mention->id = $user_api_call->id;
-                        $mention->screen_name = $user_api_call->screen_name;
+                         $user_api_call = json_decode(Utils::getURLContents(
+                         'https://api.twitter.com/1/users/show.json?screen_name=' . $username));
+
+                         $mention->name = $user_api_call->name;
+                         $mention->id = $user_api_call->id;
+                         $mention->screen_name = $user_api_call->screen_name;
+                         */
                     } else {
                         $mention->name = $mentioned_user->full_name;
                         $mention->id = $mentioned_user->user_id;

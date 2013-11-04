@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -35,12 +35,15 @@ class InsightStreamController extends ThinkUpController {
      * Number of insights to display on a page
      * @var int
      */
-    const PAGE_INSIGHTS_COUNT = 50;
+    const PAGE_INSIGHTS_COUNT = 20;
 
     public function control() {
         $config = Config::getInstance();
         $this->setViewTemplate('insights.tpl');
         $this->addToView('enable_bootstrap', true);
+        $this->addToView('developer_log', $config->getValue('is_log_verbose'));
+
+        $this->addHeaderJavaScript('assets/js/d3.min.js');
 
         if ($this->shouldRefreshCache() ) {
             if (isset($_GET['u']) && isset($_GET['n']) && isset($_GET['d']) && isset($_GET['s'])) {
@@ -51,11 +54,23 @@ class InsightStreamController extends ThinkUpController {
                     return $controller->go();
                 }
             }
-            //Populate search dropdown with service users
-            $owner_dao = DAOFactory::getDAO('OwnerDAO');
-            $owner = $owner_dao->getByEmail($this->getLoggedInUser());
-            $instance_dao = DAOFactory::getDAO('InstanceDAO');
-            $this->addToView('instances', $instance_dao->getByOwner($owner));
+            if ($this->isLoggedIn()) {
+                //Populate search dropdown with service users and add thinkup_api_key for desktop notifications.
+                $owner_dao = DAOFactory::getDAO('OwnerDAO');
+                $owner = $owner_dao->getByEmail($this->getLoggedInUser());
+                $this->addToView('thinkup_api_key', $owner->api_key);
+                $this->addHeaderJavaScript('assets/js/notify-insights.js');
+
+                $instance_dao = DAOFactory::getDAO('InstanceDAO');
+                $instances = $instance_dao->getByOwner($owner);
+                $this->addToView('instances', $instances);
+                $saved_searches = array();
+                if (sizeof($instances) > 0) {
+                    $instancehashtag_dao = DAOFactory::getDAO('InstanceHashtagDAO');
+                    $saved_searches = $instancehashtag_dao->getHashtagsByInstances($instances);
+                }
+                $this->addToView('saved_searches', $saved_searches);
+            }
         }
         $this->addToView('tpl_path', THINKUP_WEBAPP_PATH.'plugins/insightsgenerator/view/');
         return $this->generateView();
@@ -139,8 +154,11 @@ class InsightStreamController extends ThinkUpController {
             if ($this->isLoggedIn()) {
                 //if owner has no instances, show welcome message
                 $instance_dao = DAOFactory::getDAO('InstanceDAO');
-                $owned_instances = $instance_dao->getByOwner($this->getLoggedInUser(), $force_not_admin = false,
-                $only_active=true);
+                if (!isset($owner)) {
+                    $owner_dao = DAOFactory::getDAO('OwnerDAO');
+                    $owner = $owner_dao->getByEmail($this->getLoggedInUser());
+                }
+                $owned_instances = $instance_dao->getByOwner($owner, $force_not_admin = false, $only_active=true);
                 $site_root_path = Config::getInstance()->getValue('site_root_path');
                 if (sizeof($owned_instances) > 0) {
                     $this->addToView('message_header', "ThinkUp doesn't have any insights for you yet.");

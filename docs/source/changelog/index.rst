@@ -6,8 +6,16 @@ Check out what's new, fixed, and updated in each version release of ThinkUp.
 .. toctree::
    :maxdepth: 1
 
+   2.0-beta.8
+   2.0-beta.7
+   2.0-beta.6
+   2.0-beta.5
+   2.0-beta.4
+   2.0-beta.3
    2.0-beta.2
    2.0-beta.1
+   1.3.1
+   1.3
    1.2.1
    1.2
    1.1.1

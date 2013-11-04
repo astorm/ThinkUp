@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -116,6 +116,13 @@ interface InsightDAO {
      * @return array Insights
      */
     public function getAllInstanceInsights($page_count=10, $page_number=1);
+    /**
+     * Get an owner's insights created since a specified timestamp.
+     * @param int $owner_id
+     * @param int $since Timestamp
+     * @return array Insights
+     */
+    public function getAllOwnerInstanceInsightsSince($owner_id, $since);
     /**
      * Get a page of insights by instances associated with an owner.
      * @param int $owner_id

@@ -3,12 +3,9 @@
 <div class="plugin-info">
 
     <span class="pull-right">{insert name="help_link" id='facebook'}</span>
-    <h1>
-        <img src="{$site_root_path}plugins/facebook/assets/img/facebook_icon.png" class="plugin-image">
-        Facebook Plugin
-    </h1>
-    
-    <p>The Facebook plugin collects posts and status updates for Facebook users and the Facebook pages those users like and manage.</p>
+    <h2>
+        <i class="icon-facebook icon-muted"></i> Facebook 
+    </h2>
 
 </div>
 
@@ -21,7 +18,7 @@
 
 {if count($instances) > 0 }
 <div>
-    <h2>Facebook User Profiles</h2>
+    <h2>Users</h2>
 
     {foreach from=$instances key=iid item=i name=foo}
     <div class="row-fluid">
@@ -30,15 +27,17 @@
             <a href="{$site_root_path}?u={$i->network_username|urlencode}&n={$i->network|urlencode}">{$i->network_username}</a>
         </div>
         <div class="span3">
-            <span id="div{$i->id}"><input type="submit" name="submit" id="{$i->id}" class="btn {if $i->is_public}btnPriv{else}btnPub{/if}" value="{if $i->is_public}set private{else}set public{/if}" /></span>
+            <span id="div{$i->id}"><input type="submit" name="submit" id="{$i->id}" class="btn {if $i->is_public}btnPriv{else}btnPub{/if}" value="Set {if $i->is_public}private{else}public{/if}" /></span>
         </div>
+        {if $user_is_admin}
         <div class="span3">
-            <span id="divactivate{$i->id}"><input type="submit" name="submit" id="{$i->id}" class="btn {if $i->is_active}btnPause{else}btnPlay{/if}" value="{if $i->is_active}pause crawling{else}start crawling{/if}" /></span>
+            <span id="divactivate{$i->id}"><input type="submit" name="submit" id="{$i->id}" class="btn {if $i->is_active}btnPause{else}btnPlay{/if}" value="{if $i->is_active}Pause{else}Start{/if} crawling" /></span>
         </div>
+        {/if}
         <div class="span3">
             <span id="delete{$i->id}"><form method="post" action="{$site_root_path}account/?p=facebook"><input type="hidden" name="instance_id" value="{$i->id}">
             {insert name="csrf_token"}<!-- delete account csrf token -->
-            <input onClick="return confirm('Do you really want to delete this Facebook account from ThinkUp?');"  type="submit" name="action" class="btn btn-danger" value="delete" /></form></span>
+            <input onClick="return confirm('Do you really want to delete this Facebook account from ThinkUp?');"  type="submit" name="action" class="btn btn-danger" value="Delete" /></form></span>
         </div>
     </div>
     {/foreach}
@@ -49,7 +48,7 @@
 
     {if isset($owner_instance_pages) && count($owner_instance_pages) > 0 }
 <div>
-    <h2>Facebook Pages</h2>
+    <h2>Pages</h2>
     <div class="article">
     {foreach from=$owner_instance_pages key=iid item=i name=foo}
     <div class="row-fluid">
@@ -57,15 +56,17 @@
             <a href="{$site_root_path}?u={$i->network_username|urlencode}&n={$i->network|urlencode}">{$i->network_username}</a> 
         </div>
         <div class="span3">
-            <span id="div{$i->id}"><input type="submit" name="submit" class="btn {if $i->is_public}btnPriv{else}btnPub{/if}" id="{$i->id}" value="{if $i->is_public}set private{else}set public{/if}" /></span>
+            <span id="div{$i->id}"><input type="submit" name="submit" class="btn {if $i->is_public}btnPriv{else}btnPub{/if}" id="{$i->id}" value="Set {if $i->is_public}private{else}public{/if}" /></span>
         </div>
+        {if $user_is_admin}
         <div class="span3">
-            <span id="divactivate{$i->id}"><input type="submit" name="submit" class="btn {if $i->is_active}btnPause{else}btnPlay{/if}" id="{$i->id}" value="{if $i->is_active}pause crawling{else}start crawling{/if}" /></span>
+            <span id="divactivate{$i->id}"><input type="submit" name="submit" class="btn {if $i->is_active}btnPause{else}btnPlay{/if}" id="{$i->id}" value="{if $i->is_active}Pause{else}Start{/if} crawling" /></span>
         </div>
+        {/if}
         <div class="span3">
             <span id="delete{$i->id}"><form method="post" action="{$site_root_path}account/?p=facebook"><input type="hidden" name="instance_id" value="{$i->id}">
             {insert name="csrf_token"}<!-- delete page csrf token -->
-            <input onClick="return confirm('Do you really want to delete this page?');"  type="submit" name="action" class="btn" value="delete" /></form></span>
+            <input onClick="return confirm('Do you really want to delete this page?');"  type="submit" name="action" class="btn btn-danger" value="Delete" /></form></span>
         </div>
     </div>
     {/foreach}
@@ -125,14 +126,16 @@
 
 <p style="padding:5px">To set up the Facebook plugin:</p>
 <ol style="margin-left:40px">
-<li><a href="https://developers.facebook.com/apps" target="_blank" style="text-decoration: underline;">Click the "Create New App" button on Facebook.</a></li>
+<li><a href="https://developers.facebook.com/apps" target="_blank" style="text-decoration: underline;">Go to the Facebook Developers Apps page</a> and click the "Create New App" button</li>
 <li>
     Fill in the following settings.<br />
-    App Display Name: <span style="font-family:Courier;">ThinkUp</span><br />
-    App Namespace: (leave blank)
+    <strong>App Display Name:</strong> <span style="font-family:Courier;">{$logged_in_user} ThinkUp</span><br />
+    <strong>App Namespace:</strong> [leave blank]<br />
+    <strong>Web Hosting:</strong> [Do not check box]<br />
+    Click "Continue", enter in the security word, and click "Continue" again
 </li>
 <li>
-  In the "Website with Facebook Login" section, add the Site URL:<br>
+  Click "Website with Facebook Login", then next to <strong>Site URL</strong>, copy and paste this:<br>
     <small>
       <code style="font-family:Courier;" id="clippy_2988">{$thinkup_site_url}</code>
     </small>
@@ -160,9 +163,10 @@
              bgcolor="#FFFFFF"
              wmode="opaque"
       />
-    </object>
+    </object><br />
+    Click "Save Changes"
 </li>
-<li>Enter the Facebook-provided App ID and App Secret here.</li>
+<li>Enter the Facebook-provided <strong>App ID</strong> and <strong>App Secret</strong> here.</li>
 </ol>
 
 {/if}

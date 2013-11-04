@@ -5,7 +5,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -187,11 +187,16 @@ class FoursquareCrawler {
             $user_vals["user_name"] = isset($user_name) ? $user_name : 'email address withheld';
             $user_vals["full_name"] = $details->response->user->firstName." ".$details->response->user->lastName;
             $user_vals["user_id"] = $details->response->user->id;
-            $user_vals["avatar"] = $details->response->user->photo->prefix . "100x100" .
-            $details->response->user->photo->suffix;
+            if (isset($details->response->user->photo->prefix) && isset($details->response->user->photo->suffix)) {
+                $user_vals["avatar"] = $details->response->user->photo->prefix . "100x100" .
+                $details->response->user->photo->suffix;
+            } elseif (isset($details->response->user->photo)) { //sometimes just photo is set, not prefix and suffix
+                $user_vals["avatar"] = $details->response->user->photo;
+            }
             $user_vals['url'] = 'http://www.foursquare.com/user/'.$details->response->user->id;
             $user_vals["follower_count"] = 0;
             $user_vals["location"] = $details->response->user->homeCity;
+            $user_vals["is_verified"] = 0;
             $user_vals["is_protected"] = 0;
             $user_vals["post_count"] = 0;
             $user_vals["joined"] = null;
@@ -287,8 +292,12 @@ class FoursquareCrawler {
                 // The author full name is the name they gave foursquare
                 $post['author_fullname'] = $user->response->user->firstName." ".$user->response->user->lastName;
                 // The avatar is the one they have set on foursquare
-                $post["author_avatar"] = $user->response->user->photo->prefix . "100x100" .
-                $user->response->user->photo->suffix;
+                if (isset($user->response->user->photo->prefix) && isset($user->response->user->photo->suffix)) {
+                    $post["author_avatar"] = $user->response->user->photo->prefix . "100x100" .
+                    $user->response->user->photo->suffix;
+                } elseif (isset($user->response->user->photo)) { //sometimes just photo is set, not prefix and suffix
+                    $post["author_avatar"] = $user->response->user->photo;
+                }
 
                 // The author user id is there foursquare user ID
                 $post['author_user_id'] = $user->response->user->id;
@@ -363,9 +372,12 @@ class FoursquareCrawler {
                         // The author full name is the name they gave foursquare
                         $comment_store['author_fullname'] = $comment->user->firstName." ".$comment->user->lastName;
                         // The avatar is the one they have set on foursquare
-                        $comment_store["author_avatar"] = $comment->user->photo->prefix . "100x100" .
-                        $comment->user->photo->suffix;
-
+                        if (isset($comment->user->photo->prefix) && isset($comment->user->photo->suffix)) {
+                            $comment_store["author_avatar"] = $comment->user->photo->prefix . "100x100" .
+                            $comment->user->photo->suffix;
+                        } elseif (isset($comment->user->photo)) { //sometimes just photo is set, not prefix and suffix
+                            $comment_store["author_avatar"] = $comment->user->photo;
+                        }
                         // The author user id is there foursquare user ID
                         $comment_store['author_user_id'] = $comment->user->id;
                         // The date they posted the comment

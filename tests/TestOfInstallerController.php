@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -111,8 +111,7 @@ class TestOfInstallerController extends ThinkUpUnitTestCase {
         //drop DB
         $this->testdb_helper->drop($this->test_database_name);
 
-        $reqs = array('curl'=>false, 'gd'=>false, 'pdo'=>false, 'pdo_mysql'=>false, 'json'=>false, 'hash'=>false,
-        'simplexml'=>false);
+        $reqs = array('curl'=>false, 'gd'=>false, 'pdo'=>false, 'pdo_mysql'=>false, 'json'=>false, 'hash'=>false);
 
         $controller = new InstallerController(true, $reqs);
         $this->assertTrue(isset($controller));
@@ -140,8 +139,7 @@ class TestOfInstallerController extends ThinkUpUnitTestCase {
         //drop DB
         $this->testdb_helper->drop($this->test_database_name);
 
-        $reqs = array('curl'=>true, 'gd'=>true, 'pdo'=>true, 'pdo_mysql'=>true, 'json'=>true, 'hash'=>true,
-        'simplexml'=>true);
+        $reqs = array('curl'=>true, 'gd'=>true, 'pdo'=>true, 'pdo_mysql'=>true, 'json'=>true, 'hash'=>true);
 
         //set session save path to invalid path
         ini_set('session.save_path', '/someinvalidpath/wecantwriteto/');
@@ -181,7 +179,7 @@ class TestOfInstallerController extends ThinkUpUnitTestCase {
         $this->debug($result);
         $this->assertPattern('/Your system has everything it needs to run ThinkUp./', $result);
         //make sure we've auto-progressed to step 2 b/c all requirements have been met
-        $this->assertPattern('/Create Your ThinkUp Account/', $result);
+        $this->assertPattern('/Create your ThinkUp account/', $result);
         $this->restoreConfigFile();
         //reset back to what it was
         ini_set('session.save_path', $session_save_path);

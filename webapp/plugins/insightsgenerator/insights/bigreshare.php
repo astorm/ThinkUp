@@ -12,7 +12,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -38,7 +38,6 @@ class BigReshareInsight extends InsightPluginParent implements InsightPlugin {
         $post_dao = DAOFactory::getDAO('PostDAO');
         $user_dao = DAOFactory::getDAO('UserDAO');
         $service_user = $user_dao->getDetails($instance->network_user_id, $instance->network);
-        $share_verb = ($instance->network == 'twitter')?'retweeted':'reshared';
 
         foreach ($last_week_of_posts as $post) {
             $big_reshares = $post_dao->getRetweetsByAuthorsOverFollowerCount($post->post_id, $instance->network,
@@ -52,18 +51,23 @@ class BigReshareInsight extends InsightPluginParent implements InsightPlugin {
                 $post->network.'&v=fwds">';
 
                 if (sizeof($big_reshares) > 1) {
-                    $notification_text = "People with lots of followers $share_verb ".$post_link.
-                    "$this->username's post</a>.";
+                    $notification_text = "People with lots of followers ".$this->terms->getVerb('shared')." "
+                    .$post_link."$this->username's post</a>.";
                 } else {
                     $follower_count_multiple =
                     intval(($big_reshares[0]->follower_count) / $service_user->follower_count);
                     if ($follower_count_multiple > 1 ) {
                         $notification_text = "Someone with <strong>".$follower_count_multiple.
-                        "x</strong> more followers than $this->username $share_verb ".$post_link."this post</a>.";
+                        "x</strong> more followers than $this->username ".$this->terms->getVerb('shared')." "
+                        .$post_link."this post</a>.";
                     } else {
-                        $notification_text = "Someone with lots of followers $share_verb ".$post_link.
-                        "$this->username's post</a>.";
+                        $notification_text = "Someone with lots of followers ".$this->terms->getVerb('shared')." "
+                        .$post_link."$this->username's post</a>.";
                     }
+                }
+                //Replace each big resharer's bio line with the text of the post
+                foreach ($big_reshares as $sharer) {
+                    $sharer->description = '"'.$post->post_text.'"';
                 }
                 $simplified_post_date = date('Y-m-d', strtotime($post->pub_date));
                 $this->insight_dao->insertInsight("big_reshare_".$post->id, $instance->id,

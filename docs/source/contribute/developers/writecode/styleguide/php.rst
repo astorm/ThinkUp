@@ -23,11 +23,9 @@ When in doubt, use PHP5 (not PHP4) coding conventions.
    (public, private, protected) for member variables and methods.
 -  Do **NOT** use PHP closing tags for files that contain only PHP code:
 
-    The ?> at the end of code files is purposely omitted. This includes
-    for module and include files. … Removing it eliminates the
-    possibility for unwanted whitespace at the end of files which can
-    cause “header already sent” errors, XHTML/XML validation issues, and
-    other problems.
+    The \?> at the end of code files is purposely omitted. Removing it eliminates the
+    possibility of unwanted whitespace at the end of files which can
+    cause header already sent errors, XHTML/XML validation issues, and other problems.
 
 Maximum Line Length: 120 characters
 -----------------------------------
@@ -42,7 +40,7 @@ Include Docblocks on All New Code
 ---------------------------------
 
 ThinkUp uses PHPDocumentor to ease code maintenance and `auto-generate class documentation 
-<http://thinkupapp.com/docs/>`_. Include PHPDoc-style “docblocks” in all of your PHP code. When writing your
+<http://thinkup.com/docs/>`_. Include PHPDoc-style “docblocks” in all of your PHP code. When writing your
 documentation, please use `PHPDocumentor's 
 syntax <http://github.com/ginatrapani/ThinkUp/wiki/ThinkUp-and-PHPDocumentor-(PHPDoc)>`_.
 

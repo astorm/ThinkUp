@@ -7,7 +7,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -148,6 +148,8 @@ class TestOfFacebookPluginConfigurationController extends ThinkUpUnitTestCase {
         $controller = new FacebookPluginConfigurationController($owner, 'facebook');
         $output = $controller->go();
         // we have a text form element with proper data
+        $this->assertNoPattern('/Pause crawling/', $output);
+        $this->assertNoPattern('/Start crawling/', $output);
         $this->assertNoPattern('/Save Settings/', $output); // should have no submit option
         $this->assertNoPattern('/plugin_options_error_facebook_app_id/', $output); // should have no app id
         $this->assertNoPattern('/plugin_options_error_message_facebook_api_secret/', $output); // no secret
@@ -177,6 +179,7 @@ class TestOfFacebookPluginConfigurationController extends ThinkUpUnitTestCase {
         $this->debug($output);
 
         // we have a text form element with proper data
+        $this->assertPattern('/Pause crawling/', $output);
         $this->assertPattern('/Save Settings/', $output); // should have submit option
         $this->assertPattern('/plugin_options_error_message_facebook_api_secret/', $output); // secret option
         $this->assertPattern('/plugin_options_max_crawl_time/', $output); // advanced option
@@ -205,7 +208,7 @@ class TestOfFacebookPluginConfigurationController extends ThinkUpUnitTestCase {
 
         $this->debug($output);
 
-        $expected_pattern = '/add the Site URL:<br>
+        $expected_pattern = '/copy and paste this:<br>
     <small>
       <code style="font-family:Courier;" id="clippy_2988">https:\/\//';
         $this->assertPattern($expected_pattern, $output);

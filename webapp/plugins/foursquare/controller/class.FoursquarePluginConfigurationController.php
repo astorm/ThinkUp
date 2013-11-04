@@ -6,7 +6,7 @@
  *
  * LICENSE:
  *
- * This file is part of ThinkUp (http://thinkupapp.com).
+ * This file is part of ThinkUp (http://thinkup.com).
  *
  * ThinkUp is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any
@@ -79,7 +79,7 @@ class FoursquarePluginConfigurationController extends PluginConfigurationControl
         $this->addPluginOption(self::FORM_TEXT_ELEMENT, $name_field);
         // Set a message saying this field is required
         $this->addPluginOptionRequiredMessage('foursquare_client_secret',
-        'A client secret is requried to use foursquare');
+        'A client secret is required to use foursquare');
 
         // Get a data access object so we can get the options for the plugin from the database
         $plugin_option_dao = DAOFactory::getDAO('PluginOptionDAO');
@@ -126,8 +126,8 @@ class FoursquarePluginConfigurationController extends PluginConfigurationControl
         // If the server supports ssl add an s to our URL path
         $ssl = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '')?'s':'');
         // Generate the redirect URL
-        $redirect_uri = urlencode('http'.$ssl.'://'.$_SERVER['SERVER_NAME'].
-        $site_root_path.'account/?p=foursquare');
+        $app_url = Utils::getApplicationURL();
+        $redirect_uri = urlencode($app_url.'account/?p=foursquare');
 
         // Create the OAuth link based on foursquares instructions here: https://developer.foursquare.com/overview/auth
         $oauth_link = "https://foursquare.com/oauth2/authenticate?client_id=".$client_id."&response_type=code";
@@ -227,7 +227,7 @@ class FoursquarePluginConfigurationController extends PluginConfigurationControl
             // Create an array with this users information
             $r = array('user_id'=>$foursquare_user_id, 'user_name'=>$foursquare_username,
             'full_name'=>'', 'avatar'=>'', 'location'=>'', 'description'=>'',
-            'url'=>'http://www.foursquare.com/user/'.$foursquare_user_id, 'is_protected'=>'0',
+            'url'=>'http://www.foursquare.com/user/'.$foursquare_user_id, 'is_verified'=>'0', 'is_protected'=>'0',
             'follower_count'=>null, 'friend_count'=>null, 'post_count'=>null, 'last_updated'=>'', 'last_post'=>null,
             'joined'=>'', 'last_post_id'=>'', 'network'=>'foursquare' );
             // Create a new user with this information
