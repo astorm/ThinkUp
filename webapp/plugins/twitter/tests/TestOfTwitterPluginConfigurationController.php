@@ -266,12 +266,7 @@ class TestOfTwitterPluginConfigurationController extends ThinkUpUnitTestCase {
         //Check if a URL was passed
         $auth_link = $v_mgr->getTemplateDataItem('oauthorize_link');
         $this->assertEqual("test_auth_URL_".urlencode("http://127.0.0.1".$THINKUP_CFG['site_root_path'].
-<<<<<<< HEAD
-        "plugins/twitter/auth.php"), $auth_link);
-=======
         "account/?p=twitter"), $auth_link);
-
->>>>>>> upstream/master
     }
 
     /**
