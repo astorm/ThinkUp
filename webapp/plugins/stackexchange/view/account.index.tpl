@@ -1,58 +1,54 @@
-<div class="append_20 alert helpful">
-    {insert name="help_link" id='stackexchange'}
-    <h2>StackExchange</h2>
-    <div>
-    <p>{$message}</p>
-    </div>
+<div class="plugin-info">
+    <span class="pull-right">{insert name="help_link" id='stackexchange'}</span>
+    <h2>
+        StackExchange
+    </h2>
+    
 </div>
 
-    {if $oauthorize_link}
-        <div id="add-account-div" style="padding-top : 20px;">
-        <a href="{$oauthorize_link}" class="linkbutton emphasized">Add a Stack Exchange Account</a>
-        <br /><br />
-        </div>
-    {/if}
+<p>{$message}</p>
     
     {if count($owner_instances) > 0 }
-    <br>
-    <h2 class="subhead">Stack Exchange Accounts</h2>
-        <div class="clearfix">
-            <div class="grid_4 right" style="padding-top:.5em;">
-                Account ID
-            </div>    
-        </div>
+    <table class="table">
+        <tr>
+            <th><h4 class="pull-left">Account ID</h4></th>
+            <th><i class="icon-lock icon-2x icon-muted"></i></th>
+            {if $user_is_admin}<th><i class="icon-refresh icon-2x icon-muted"></i></th>{/if}
+            <th><i class="icon-trash icon-2x icon-muted"></i></th>
+        </tr>
         {foreach from=$owner_instances key=iid item=i name=foo}
-            <div class="clearfix">
-                <div class="grid_4 right" style="padding-top:.5em;">
+        <tr>
+            <td>
+                <h3 class="lead">
                     <a href="{$site_root_path}?u={$i->network_username}">{$i->network_username}</a>
-                </div>
-                <div class="grid_4 right">
-                    <span id="div{$i->id}"><input type="submit" name="submit" class="linkbutton
-                    {if $i->is_public}btnPriv{else}btnPub{/if}" id="{$i->id}" value="{if $i->is_public}set private{else}set public{/if}" /></span>
-                </div>
-                <div class="grid_4 right">
-                    <span id="divactivate{$i->id}"><input type="submit" name="submit" class="linkbutton {if $i->is_active}btnPause{else}btnPlay{/if}" id="{$i->id}" value="{if $i->is_active}pause crawling{else}start crawling{/if}" /></span>
-                </div>
-                <div class="grid_8 right">
-                    <span id="delete{$i->id}"><form method="post" action="{$site_root_path}account/?p={$network}">
-                    <input type="hidden" name="instance_id" value="{$i->id}">
-                    {insert name="csrf_token"}<input
-                    onClick="return confirm('Do you really want to delete this Stack Exchange account?');"
-                    type="submit" name="action" class="linkbutton" 
-                    value="delete" /></form></span>
-                </div>
-            </div>
-            <div class="clearfix">
-                <div style="padding-top:.5em;">
-                    Member Of: 
-                    {foreach from=$i->member_of item=j}
-                    {$j}, 
-                    {/foreach}
-                </div>
-            </div>
+                </h3>
+            </td>
+            
+            <td class="action-button">
+                <span id="div{$i->id}"><input type="submit" name="submit" class="btn 
+                {if $i->is_public}btnPriv{else}btnPub{/if}" id="{$i->id}" value="{if $i->is_public}set private{else}set public{/if}" /></span>
+            </td>
+            {if $user_is_admin}
+            <td class="action-button">
+                <span id="divactivate{$i->id}"><input type="submit" name="submit" class="btn {if $i->is_active}btnPause{else}btnPlay{/if}" id="{$i->id}" value="{if $i->is_active}pause crawling{else}start crawling{/if}" /></span>
+            </td>
+            {/if}
+            <td class="action-button">
+                <span id="delete{$i->id}"><form method="post" action="{$site_root_path}account/?p={$network}">
+                <input type="hidden" name="instance_id" value="{$i->id}">
+                {insert name="csrf_token"}<input
+                onClick="return confirm('Do you really want to delete this Stack Exchange account?');"
+                type="submit" name="action" class="btn" 
+                value="delete" /></form></span>
+            </td>
+        </tr>        
         {/foreach}
+    </table>
     {/if}
-    
+
+    {if $oauthorize_link}
+        <a href="{$oauthorize_link}" class="btn btn-success add-account">Add a Stack Exchange Account</a>
+    {/if}    
     
     <div class="prepend_20 append_20">
     
