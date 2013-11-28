@@ -1,6 +1,8 @@
 <?php
 class PulsestormStackexchangeCrawlSyncMysql
 {
+    const ERROR_OWNER_ID_ZERO = 'ERROR_OWNER_ID_ZERO';
+    protected $_crawlerForLogging;
     public function syncPosts($observer)
     {        
         $instances = $observer->params->instances;        
@@ -36,18 +38,51 @@ class PulsestormStackexchangeCrawlSyncMysql
     {        
         DAOFactory::getDao('PulsestormStackexchangeAccountids')->updateFromUsersTable();    
     }
+
+    protected function _logInfo($message)
+    {
+        
+        $this->_getCrawlerForLogging()->logInfo($message);
+    }
+    
+
+    
+    protected function _logError($message)
+    {
+        
+        $this->_getCrawlerForLogging()->logError($message);
+    }
+    
+    protected function _getCrawlerForLogging()
+    {
+        if(!$this->_crawlerForLogging)
+        {
+            $this->_crawlerForLogging = new stackexchangeCrawler;
+        }
+        return $this->_crawlerForLogging;
+    }
     
     protected function _updatePostsWithInstance($instance)
     {
         $ids_and_networks = DAOFactory::getDao('PulsestormStackexchangeAccountids')
         ->getByAccountId($instance->network_user_id);    
 
+        $c = 1;
         foreach($ids_and_networks as $id_and_network)
         {
+            $this->_logInfo('Starting post sync for stack exchange id ['  . 
+                $id_and_network['account_id_stackexchange']                . 
+                '] for network '                                           . 
+                '['                                                        .
+                $id_and_network['stackexchange_network']                   .
+                ']');
+                
             $this->_updatePostsWithIdAndNetworkQuestions($id_and_network);            
             $this->_updatePostsWithIdAndNetworkAnswers($id_and_network);
             $this->_updatePostsWithIdAndNetworkComments($id_and_network);
+            $c++;
         }
+        // exit(__METHOD__);
     }
     
     protected function _updatPostsWithQuestionsIveAsked($id_and_network)
@@ -92,10 +127,14 @@ class PulsestormStackexchangeCrawlSyncMysql
         $dao_posts     = DAOFactory::getDAO('PostDAO');
 
         $result = $dao_questions->getResultSetBy('question_id', $question_ids);
+        
         $result->setFetchMode(PDO::FETCH_ASSOC);
+        $c = 1;
         while($row = $result->fetch())
         {      
             $this->_processQuestionIntoPost($row, $stackexchange_network, $dao_posts);
+            //$this->_logError('Processing ' . $c . ' for ' . $stackexchange_network);
+            $c++;
         }    
     }
     
@@ -169,8 +208,10 @@ class PulsestormStackexchangeCrawlSyncMysql
         $post = (array) $this->_generateEmptyQuestionObjectForUpdate($row,$stackexchange_network);
         if($dao_posts->isPostInDB($post['post_id'], 'stackexchange'))
         {
+            //$this->_logError("Skipping -- post already in DB");
             return; //still not sure how/if to handle updates
         }
+        
         $dao_posts->addPost($post);    
     }
     
@@ -300,7 +341,7 @@ class PulsestormStackexchangeCrawlSyncMysql
 
     
     protected function _updatePostsWithIdAndNetworkQuestions($id_and_network)
-    {
+    {        
         //questions I've asked
         $this->_updatPostsWithQuestionsIveAsked($id_and_network);
         
@@ -309,6 +350,7 @@ class PulsestormStackexchangeCrawlSyncMysql
         
         //questions I've commented on
         $this->_updatePostsWithQuestionsIveCommentedOn($id_and_network);
+        
     }
 
     protected function _updatePostsWithIdAndNetworkAnswers($id_and_network)
@@ -326,9 +368,10 @@ class PulsestormStackexchangeCrawlSyncMysql
             return;
         }        
         
-        
         $raw_ids = $this->_getRawAccountInformationFromApi($ids, $network);        
+        
         $this->_processRawIdsWithCrawler($raw_ids);        
+        
         $this->_updateUsersFromStackExchangeAccounts();        
     }
     
@@ -389,6 +432,17 @@ class PulsestormStackexchangeCrawlSyncMysql
         $user_id = DAOFactory::getDao('PulsestormStackexchangeAccountids')
         ->getAccountIdFromUserAndNetwork($row['owner_id'],$network);
     
+        
+        if($row['owner_id'] == 0)
+        {
+            //$this->_logError("Don't know how to handle question with owner ID of 0");
+            $user_id = 0;
+        }        
+        else if(!$user_id)
+        {
+            $this->_logError("Could not find Account ID for $network with owner id of " . $row['owner_id'],"\n");
+        }
+        
         $o = new stdClass;
         $o->post_id         = $network . '-' . $row['question_id'];        
         $o->author_username = $user_id;

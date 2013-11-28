@@ -24,7 +24,6 @@ class PulsestormStackexchangeAccountMysql extends PulsestormStackexchangeAbstrac
         $o->account_id_network_site     = $object->user_id;
         $o->stackexchange_network       = $this->getNetwork();        
         
-        
         $dao = DAOFactory::getDao('PulsestormStackexchangeAccountids')->insertOrUpdate($o);
 
         //serialize badge count as json

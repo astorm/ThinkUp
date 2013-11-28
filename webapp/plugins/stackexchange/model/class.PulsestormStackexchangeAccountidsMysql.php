@@ -25,6 +25,7 @@ CREATE TABLE `{$this->_getTableName()}` (
   `account_id_network_site` int(11) default NULL,
   `stackexchange_network` varchar(255) default NULL,
   PRIMARY KEY  (`pulsestorm_stackexchange_accountids_id`),
+  UNIQUE KEY `UNIQUE_ALL` (`account_id_stackexchange`,`account_id_network_site`,`stackexchange_network`),
   KEY `INDEX_ALL` (`account_id_stackexchange`,`account_id_network_site`,`stackexchange_network`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1
 SQL;
@@ -147,5 +148,46 @@ SQL;
     {
         var_dump($o);
         exit;
+    }
+
+    /**
+    * If primary key is missing, query for it.  This makes an assumption
+    * that a mismatched field count means there's a missing key. Should
+    * probably be fixed at the abstract class level
+    * @todo fix me
+    */
+    protected function _addMissingPrimaryKeyToObject($object)
+    {        
+        $count_fields = count($this->_getFields());
+        $count_vars   = count(get_object_vars($object));
+        if($count_fields != $count_vars)
+        {
+            $field_primary_key = 'pulsestorm_stackexchange_accountids_id';
+            $sql = 'SELECT ' . $field_primary_key . ' FROM ' . $this->_getTableName() . ' ' .
+            'WHERE      
+                account_id_stackexchange    = ? 
+                AND account_id_network_site = ? 
+                AND stackexchange_network   = ?';
+
+            $params = array(
+                1=>$object->account_id_stackexchange,
+                2=>$object->account_id_network_site,
+                3=>$object->stackexchange_network,
+            );
+            $rows = $this->getDataRowsAsArrays($this->execute($sql, $params));
+            $row  = array_shift($rows);   
+            if(count($rows) != 0)
+            {
+                throw new Exception('Unique index missing from tu_pulsestorm_stackexchange_accountids');
+            }
+            $object->{$field_primary_key} = $row[$field_primary_key];
+        }
+        return $object;
+    }
+    
+    public function insertOrUpdate($object)    
+    {
+        $object = $this->_addMissingPrimaryKeyToObject($object);
+        return parent::insertOrUpdate($object);    
     }
 }

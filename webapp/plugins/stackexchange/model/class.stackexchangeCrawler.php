@@ -106,6 +106,11 @@ class stackexchangeCrawler {
     {
         $this->log($message, 'logUserError');
     }
+
+    public function logInfo($message)
+    {
+        $this->log($message, 'logInfo');
+    }
     
     public function parseSingleRowIntoTables($instance)
     {
@@ -163,7 +168,20 @@ class stackexchangeCrawler {
         
         $o->insertOrUpdate($object);
     }
-    
+
+    /**
+    * Identify which DAO to use for raw JSON from API
+    *
+    * The StackExchange crawler works in multiple passes.
+    * 1. Raw API data is downloaded into tu_pulsestorm_stackexchange_raw
+    * 2. This raw data is processed into individual network tables, capturing
+    *    the data at full fidelity
+    * 3. This full fidelity data is processed into the tu_posts table.  
+    *
+    * The getObjectType method is concerned with step 2. This method examines
+    * an individual entry from the raw JSON data, and decides which DAO post
+    * type it should use to save the data.
+    */    
     static public function getObjectType($object)
     {
         $vars = get_object_vars($object);
@@ -172,33 +190,47 @@ class stackexchangeCrawler {
         {
             return 'unknown-object-type-' . __METHOD__;
         }
-        
-        if($keys[0] == 'question_id' && $keys[1] == 'answer_id')
-        {
-            return 'PulsestormStackexchangeAnswer';
-        }
-        
-        if($keys[0] == 'comment_id')
+                
+        if(in_array('comment_id', $keys))
         {
             return 'PulsestormStackexchangeComment';
         }
 
-        if($keys[0] == 'question_id')
+        if( in_array('question_id', $keys)      && 
+            in_array('answer_id', $keys)        && 
+            !in_array('comment_id', $keys)      &&
+            !in_array('post_id', $keys))
+        {
+            return 'PulsestormStackexchangeAnswer';
+        }
+
+        if( in_array('question_id', $keys)      && 
+            !in_array('answer_id', $keys)       && 
+            !in_array('comment_id', $keys)      &&
+            !in_array('post_id', $keys))
         {
             return 'PulsestormStackexchangeQuestion';
         }
 
-        if($keys[0] == 'post_id')
-        {
-            return 'PulsestormStackexchangePost';
+        if( !in_array('question_id', $keys)      && 
+            !in_array('answer_id', $keys)       && 
+            !in_array('comment_id', $keys)      &&
+            in_array('post_id', $keys))
+        {            return 'PulsestormStackexchangePost';
         }
         
         if(in_array('user_id',$keys) && in_array('account_id',$keys))
         {
             return 'PulsestormStackexchangeAccount';
         }
+
+        #log the object to see where the stuff above fails        
+        // ob_start();
+        // var_dump($object);
+        // $contents = ob_get_clean();
+        // file_put_contents('/tmp/test.log',"$contents\n",FILE_APPEND);
         
-        return 'unknown-object-type-' . __METHOD__ . ' :: ' . implode('_', $keys);
+        return 'unknown-object-type-' . __METHOD__ . ' :: ' . implode('-', $keys);
     }
     
     public function getPropertiesWithGlob($glob)

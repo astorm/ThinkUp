@@ -206,6 +206,11 @@ abstract class PulsestormStackexchangeAbstractMysql extends PDODAO
         $this->execute($sql, $params);       
     }
     
+    /**
+    * Refactor — inserts without a primary key
+    * are causing all sorts of problems
+    * @todo fix me
+    */    
     public function insertOrUpdate($object)
     {        
         $start_time = microtime();                
@@ -215,7 +220,7 @@ abstract class PulsestormStackexchangeAbstractMysql extends PDODAO
             $this->insertObject($object);
         }
         catch(Exception $e)
-        {            
+        {        
             $this->updateObject($object);       
         }
         

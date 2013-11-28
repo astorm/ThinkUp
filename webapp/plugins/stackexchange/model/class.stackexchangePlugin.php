@@ -133,7 +133,13 @@ class stackexchangePlugin extends Plugin implements CrawlerPlugin, DashboardPlug
         return $controller->go();
     }
 
-    public function crawl() {                 
+    protected function _isCli()
+    {
+        global $argv;
+        return count($argv) > 0;
+    }
+    
+    public function crawl() {   
         $this->init();        
         
         $o          = DAOFactory::getDao('InstanceDAO');
@@ -141,11 +147,11 @@ class stackexchangePlugin extends Plugin implements CrawlerPlugin, DashboardPlug
         
         //fetches JSON from API
         $this->_updateRawContent($instances);
-        
+                
         //parse JSON into tables
         $dao_raw = DAOFactory::getDAO('PulsestormStackexchangeRaw');
         $count   = $dao_raw->countUnprocessed();
-        if($count > 100)
+        if($count > 100 && !$this->_isCli())
         {
             $this->_crawler->logError("Skipping $count rows of crawled results to parse. Please use the Crawl Queue link.");
             $insight_dao = DAOFactory::getDAO('InsightDAO');
