@@ -71,6 +71,8 @@ $plugin_tests->add(new TestOfYouTubeCrawler());
 $plugin_tests->add(new TestOfYouTubePlugin());
 $plugin_tests->add(new TestOfYouTubePluginConfigurationController());
 $plugin_tests->add(new TestOfInsightPluginParent());
+$plugin_tests->add(new TestOfInsightsGeneratorPluginConfigurationController());
+$plugin_tests->add(new TestOfInsightsGeneratorPlugin());
 //Insights
 $plugin_tests->add(new TestOfArchivedPostsInsight());
 $plugin_tests->add(new TestOfAllAboutYouInsight());
@@ -91,6 +93,11 @@ $plugin_tests->add(new TestOfLinkPromptInsight());
 $plugin_tests->add(new TestOfLocalFollowersInsight());
 $plugin_tests->add(new TestOfOutreachPunchcardInsight());
 $plugin_tests->add(new TestOfSplitOpinionsInsight());
+$plugin_tests->add(new TestOfViewDurationInsight());
+$plugin_tests->add(new TestOfLikeSpikeInsight());
+$plugin_tests->add(new TestOfViewSpikeInsight());
+$plugin_tests->add(new TestOfSubscriberChangeInsight());
+$plugin_tests->add(new TestOfMinutesViewedInsight());
 $version = explode('.', PHP_VERSION); //dont run redis test for php less than 5.3
 if ($version[0] >= 5 && $version[1] >= 3) { //only run Redis tests if PHP 5.3
     $plugin_tests->add(new TestOfStreamMessageQueueRedis());

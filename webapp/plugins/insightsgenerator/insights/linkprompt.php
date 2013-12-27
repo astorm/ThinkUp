@@ -66,12 +66,12 @@ class LinkPromptInsight extends InsightPluginParent implements InsightPlugin {
             $num_links = $link_dao->countLinksPostedByUserSinceDaysAgo($instance->network_user_id,
             $instance->network, 30);
 
-            if ($num_posts && (($num_links / $num_posts) > 0.2) && !count($posts_with_links)) {
+            if ($num_posts && (($num_links / $num_posts) > 0.2) && count($recent_posts) && !count($posts_with_links)) {
                 $insight_text = $this->username." hasn't ".$this->terms->getVerb('posted')
                 ." a link in the last 2 days. It may be time to share an interesting link with "
                 .$this->terms->getNoun('friend', InsightTerms::PLURAL).".";
 
-                $this->insight_dao->insertInsight('link_prompt', $instance->id, $this->insight_date,
+                $this->insight_dao->insertInsightDeprecated('link_prompt', $instance->id, $this->insight_date,
                 "Nudge:", $insight_text, basename(__FILE__, ".php"), Insight::EMPHASIS_LOW);
             }
         }

@@ -56,4 +56,128 @@ interface VideoDAO {
      * getHotVideosVisualizationData()
      */
     public function getHotVideos($username, $network, $limit, $column, $as=null);
+    /**
+     * Returns the average of the average view percentage for the last $duration days if $duration is not null or
+     * all time if it is.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  int $duration Defaults to null and includes every video in the count, if set only includes videos from
+     *             the last $duration days.
+     * @return int the average of the average view percentage
+     */
+    public function getAverageOfAverageViewPercentage($username, $network, $duration=null);
+    /**
+     * Returns the lowest of the average view percentage for the last $duration days if $duration is not null or
+     * all time if it is.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  int $duration Defaults to null and includes every video in the count, if set only includes videos from
+     *             the last $duration days.
+     * @return int the lowest of the average view percentage
+     */
+    public function getAverageViewPercentageLow($username, $network, $duration=null);
+    /**
+     * Returns the highest of the average view percentage for the last $duration days if $duration is not null or
+     * all time if it is.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  int $duration Defaults to null and includes every video in the count, if set only includes videos from
+     *             the last $duration days.
+     * @return int the highest of the average view percentage
+     */
+    public function getAverageViewPercentageHigh($username, $network, $duration=null);
+    /**
+     * Returns the highest number of likes a users video has, since $since_date if it is set or since today if it
+     * is null and for all time since $since_date if $duration is null or for $duration days before $since_date if it
+     * is set.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  str $duration Defaults to null and includes every video in the count, if set only includes videos from
+     *                       the last $duration days.
+     * @param str $since_date Defaults to todays date or if set includes videos since $since_date
+     * @return int The highest percentage of likes a users video has
+     */
+    public function getHighestLikes($username, $network, $duration=null, $since_date=null);
+    /**
+     * Returns the average number of likes a users videos has, since $since_date if it is set or since today if it
+     * is null and for all time since $since_date if $duration is null or for $duration days before $since_date if it
+     * is set.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  str $duration Defaults to null and includes every video in the count, if set only includes videos from
+     *                       the last $duration days.
+     * @param str $since_date Defaults to todays date or if set includes videos since $since_date
+     * @return int The average percentage of likes a users video has
+     */
+    public function getAverageLikeCount($username, $network, $duration=null);
+    /**
+     * Returns true if the user has posted videos which have likes in $duration days since today if $since is null or
+     * since $since if it is not.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  str $duration Defaults to null and includes every video in the check, if set only includes videos from
+     *                       the last $duration days.
+     * @param str $since_date Defaults to todays date or if set includes videos since $since_date
+     * @return int True or False
+     */
+    public function doesUserHaveVideosWithLikesSinceDate($username, $network, $duration, $since=null);
+        /**
+     * Returns the highest number of views a video received for all time if $duration is null and for the last $duration
+     * days if is not.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the video was posted on
+     * @param  int $duration How many days before today to include in the count, or null for all time
+     * @param  str $start_date The date to duration is relative to, or todays date if null
+     * @return int Highest view count in the specified time period
+     */
+    public function getHighestViews($username, $network, $duration=null, $start_date=null);
+    /**
+     * Returns the average number of views a video received for all time if $duration is null and for the last $duration
+     * days if is not.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the video was posted on
+     * @param  int $duration How many days before today to include in the count, or null for all time
+     * @param  str $start_date The date to duration is relative to, or todays date if null
+     * @return int Average view count in the specified time period
+     */
+    public function getAverageViews($username, $network, $duration=null, $start_date=null);
+    /**
+     * Returns true if the user has posted videos which have been viewed in $duration days since today if $since is null
+     * or since $since if it is not.
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  str $duration Defaults to null and includes every video in the check, if set only includes videos from
+     *                       the last $duration days.
+     * @param str $since_date Defaults to todays date or if set includes videos since $since_date
+     * @return int True or False
+     */
+    public function doesUserHaveVideosWithViewsSinceDate($username, $network, $duration, $since=null);
+    /**
+     * Returns the total number of subscribers gained or lost for $limit videos
+     * @param  str $username Username of the user to retrieve the count for
+     * @param  str $network  Network the videos were posted on
+     * @param  int $limit The maximum number of videos to retur
+     * @return Array An array with the subscriber change, video title and pub_date for up to $limit videos
+     */
+    public function getNetSubscriberChange($username, $network, $limit);
+    /**
+     * Returns the average number of minutes people have spent viewing the users videos, for all time if duration is not
+     * set and for the last $duration days if it is.
+     * @param  str $user_name The users network username.
+     * @param  str $network   The network the video was posted on.
+     * @param  int duration  How many days worth of videos to include in the calculation, defaults to null which
+     *                       includes every video from all time.
+     * @return int  The average number of minutes the users videos were viewed for.
+     */
+    public function getAverageMinutesViewed($user_name, $network, $duration=null);
+    /**
+     * Returns the highest number of minutes people have spent viewing a users videos, for all time if duration is not
+     * set and for the last $duration days if it is.
+     * @param  str $user_name The users network username.
+     * @param  str $network   The network the video was posted on.
+     * @param  int duration  How many days worth of videos to include in the calculation, defaults to null which
+     *                       includes every video from all time.
+     * @return int  The highest number of minutes a users video has been viewed for.
+     */
+    public function getHighestMinutesViewed($user_name, $network, $duration=null);
 }

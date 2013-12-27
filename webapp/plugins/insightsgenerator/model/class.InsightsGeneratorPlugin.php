@@ -31,10 +31,20 @@
  */
 
 class InsightsGeneratorPlugin extends Plugin implements CrawlerPlugin {
+    /**
+     * @const The day on which we send weekly digests.
+     */
+    const WEEKLY_DIGEST_DAY_OF_WEEK = 1; //Monday
+
+    /**
+     * @var Current Unix timestamp, here for testing.
+     */
+    var $current_timestamp;
 
     public function __construct($vals=null) {
         parent::__construct($vals);
         $this->folder_name = 'insightsgenerator';
+        $this->current_timestamp = time();
     }
 
     public function activate() {
@@ -84,5 +94,154 @@ class InsightsGeneratorPlugin extends Plugin implements CrawlerPlugin {
             $logger->logUserSuccess("Completed insight generation for ".$instance->network_username." on ".
             $instance->network, __METHOD__.','.__LINE__);
         }
+
+        // Don't do email for regular users
+        if (!$current_owner->is_admin) {
+            return;
+        }
+
+        // Send email digest the first run after 4am
+        if ((int)date('G', $this->current_timestamp) >= 4) {
+            //Get plugin options
+            $plugin_option_dao = DAOFactory::GetDAO('PluginOptionDAO');
+            $options = $plugin_option_dao->getOptionsHash($this->folder_name, true);
+            //Get plugin ID
+            $plugin_dao = DAOFactory::getDAO('PluginDAO');
+            $plugin_id = $plugin_dao->getPluginId($this->folder_name);
+            //Get today's date
+            $today = date('Y-m-d', $this->current_timestamp);
+
+            $do_daily = false;
+            $do_weekly = false;
+
+            $last_daily = isset($options['last_daily_email']) ? $options['last_daily_email']->option_value : null;
+            if ($last_daily != $today) {
+                if ($last_daily === null) {
+                    $plugin_option_dao->insertOption($plugin_id, 'last_daily_email', $today);
+                } else {
+                    $plugin_option_dao->updateOption($options['last_daily_email']->id,
+                    'last_daily_email', $today);
+                }
+                $do_daily = true;
+            }
+
+            $last_weekly = isset($options['last_weekly_email']) ? $options['last_weekly_email']->option_value : null;
+            if ($last_weekly != $today && date('w', $this->current_timestamp) == self::WEEKLY_DIGEST_DAY_OF_WEEK) {
+                if ($last_weekly === null) {
+                    $plugin_option_dao->insertOption($plugin_id, 'last_weekly_email', $today);
+                } else {
+                    $plugin_option_dao->updateOption($options['last_weekly_email']->id,
+                    'last_weekly_email', $today);
+                }
+                $do_weekly = true;
+            }
+
+            if ($do_daily || $do_weekly) {
+                $owners = $owner_dao->getAllOwners();
+            }
+
+            if ($do_daily) {
+                foreach ($owners as $owner) {
+                    if ($this->sendDailyDigest($owner, $options)) {
+                        $logger->logUserSuccess("Mailed daily digest to ".$owner->email.".", __METHOD__.','.__LINE__);
+                    }
+                }
+            }
+
+            if ($do_weekly) {
+                foreach ($owners as $owner) {
+                    if ($this->sendWeeklyDigest($owner, $options)) {
+                        $logger->logUserSuccess("Mailed weekly digest to ".$owner->email.".", __METHOD__.','.__LINE__);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Email daily insight digest.
+     * @param Owner $owner Owner to send for
+     * @param array $options Plugin options
+     * return bool Whether email was sent
+     */
+    private function sendDailyDigest($owner, $options) {
+        if (in_array($owner->email_notification_frequency, array('both','daily'))) {
+            return $this->sendDigestSinceWithTemplate($owner, 'Yesterday 4am', '_email.daily_insight_digest.tpl',
+            $options);
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Email weekly insight digest.
+     * @param Owner $owner Owner to send for
+     * @param array $options Plugin options
+     * return bool Whether email was sent
+     */
+    private function sendWeeklyDigest($owner, $options) {
+        if (in_array($owner->email_notification_frequency, array('both','weekly'))) {
+            return $this->sendDigestSinceWithTemplate($owner, '1 week ago 4am', '_email.weekly_insight_digest.tpl',
+            $options);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Send out insight email digest for a given time period.
+     * @param Owner $owner Owner to send for
+     * @param str $start When to start insight lookup
+     * @param str $template Email view template to use
+     * @param array $options Plugin options
+     * return bool Whether email was sent
+     */
+    private function sendDigestSinceWithTemplate($owner, $start, $template, &$options) {
+        $insights_dao = DAOFactory::GetDAO('InsightDAO');
+        $start_time = date( 'Y-m-d H:i:s', strtotime($start, $this->current_timestamp));
+        $insights = $insights_dao->getAllOwnerInstanceInsightsSince($owner->id, $start_time);
+        if (count($insights) == 0) {
+            return false;
+        }
+
+        $config = Config::getInstance();
+        $view = new ViewManager();
+        $view->caching=false;
+
+        // If we've got a Mandrill key and template, send HTML
+        if ($config->getValue('mandrill_api_key') != null && !empty($options['mandrill_template'])) {
+            $view->assign('insights', $insights);
+            $insights = $view->fetch(Utils::getPluginViewDirectory($this->folder_name).'_email.insights_html.tpl');
+            $parameters = array();
+            $parameters['insights'] = $insights;
+            $parameters['app_title'] = $config->getValue('app_title_prefix')."ThinkUp";
+            $parameters['app_url'] = Utils::getApplicationURL();
+            $parameters['unsub_url'] = Utils::getApplicationURL().'account/index.php?m=manage#instances';;
+            // It's a weekly digest if we're going back more than a day or two.
+            $days_ago = ($this->current_timestamp - strtotime($start)) / (60*60*24);
+            $parameters['weekly_or_daily'] = $days_ago > 2 ? 'Weekly' : 'Daily';
+
+            try {
+                Mailer::mailHTMLViaMandrillTemplate($owner->email, 'ThinkUp has new insights for you!',
+                $options['mandrill_template']->option_value, $parameters);
+                return true;
+            } catch (Mandrill_Unknown_Template $e) {
+                // In this case, we'll fall back to plain text sending and warn the user in the log
+                $logger = Logger::getInstance();
+                $logger->logUserError("Invalid mandrill template configured:".
+                $options['mandrill_template']->option_value.".", __METHOD__.','.__LINE__);
+                unset($options['mandrill_template']);
+            }
+        }
+
+        $view->assign('apptitle', $config->getValue('app_title_prefix')."ThinkUp" );
+        $view->assign('application_url', Utils::getApplicationURL());
+        $view->assign('insights', $insights);
+        $message = $view->fetch(Utils::getPluginViewDirectory($this->folder_name).$template);
+        list ($subject, $message) = explode("\n", $message, 2);
+
+        Mailer::mail($owner->email, $subject, $message);
+        return true;
     }
 }

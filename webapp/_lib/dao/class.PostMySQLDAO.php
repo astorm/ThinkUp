@@ -52,7 +52,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
     'in_rt_of_user_id', 'location', 'place', 'place_id', 'geo', 'retweet_count_cache',
     'retweet_count_api', 'old_retweet_count_cache', 'favlike_count_cache',
     'reply_count_cache', 'is_reply_by_friend', 'is_retweet_by_friend',
-    'reply_retweet_distance', 'is_geo_encoded', 'author_follower_count');
+    'reply_retweet_distance', 'is_geo_encoded', 'author_follower_count', 'permalink');
 
     /**
      * Sanitizes an order_by argument to avoid SQL injection and ensure that the table you're ordering by is valid.
@@ -2366,7 +2366,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         $q = "SELECT id FROM #prefix#posts WHERE network=:network and author_username=:author_username ";
         $q .= "AND in_reply_to_user_id IS null AND in_reply_to_post_id IS null AND in_retweet_of_post_id is null ";
         $q .= "AND (retweet_count_cache > 0 OR old_retweet_count_cache > 0 OR retweet_count_api > 0) ";
-        $q .= "AND pub_date <= DATE_SUB(:since, INTERVAL :last_x_days DAY) LIMIT 1;";
+        $q .= "AND pub_date >= DATE_SUB(:since, INTERVAL :last_x_days DAY) LIMIT 1;";
         $vars = array(
             ':author_username'=>$author_username,
             ':network'=>$network,
@@ -2391,7 +2391,7 @@ class PostMySQLDAO extends PDODAO implements PostDAO  {
         $q = "SELECT id FROM #prefix#posts WHERE network=:network and author_username=:author_username ";
         $q .= "AND in_reply_to_user_id IS null AND in_reply_to_post_id IS null AND in_retweet_of_post_id is null ";
         $q .= "AND (favlike_count_cache > 0) ";
-        $q .= "AND pub_date <= DATE_SUB(:since, INTERVAL :last_x_days DAY) LIMIT 1;";
+        $q .= "AND pub_date >= DATE_SUB(:since, INTERVAL :last_x_days DAY) LIMIT 1;";
         $vars = array(
             ':author_username'=>$author_username,
             ':network'=>$network,
